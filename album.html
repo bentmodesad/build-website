@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Album Foto Sekolah - Data Permanen</title>
+    <title>Album Foto Sekolah - X DKV 3</title>
+    
+    <!-- Favicon - Icon Website -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -119,6 +124,10 @@
             color: #6a11cb;
             margin-bottom: 30px;
             font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .input-group {
@@ -131,6 +140,9 @@
             margin-bottom: 8px;
             color: #555;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .input-group input, .input-group select {
@@ -159,6 +171,10 @@
             cursor: pointer;
             transition: transform 0.3s;
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .login-btn:hover {
@@ -170,6 +186,10 @@
             color: #ff4757;
             margin-top: 15px;
             display: none;
+            padding: 10px;
+            background: #ffeaea;
+            border-radius: 5px;
+            border-left: 4px solid #ff4757;
         }
 
         /* Tombol Kembali ke Beranda */
@@ -220,6 +240,10 @@
             padding: 20px 0;
             color: white;
             margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 25px;
+            backdrop-filter: blur(10px);
         }
 
         .logo {
@@ -254,6 +278,9 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .logout-btn:hover {
@@ -332,12 +359,16 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             margin-top: 10px;
+            transition: all 0.3s;
         }
 
         .browse-btn:hover {
             background: #2575fc;
+            transform: translateY(-2px);
         }
 
         #fileInput {
@@ -416,6 +447,7 @@
             cursor: pointer;
             font-size: 18px;
             padding: 5px;
+            transition: color 0.3s;
         }
 
         .remove-file:hover {
@@ -553,6 +585,9 @@
             font-weight: 600;
             color: #555;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .filter-btn.active {
@@ -587,6 +622,11 @@
             width: 100%;
             height: 200px;
             object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .photo-card:hover .photo-img {
+            transform: scale(1.05);
         }
 
         .photo-info {
@@ -617,10 +657,18 @@
             margin-top: 10px;
             font-size: 14px;
             display: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #ff2e43;
         }
 
         .admin-view .delete-btn {
-            display: inline-block;
+            display: flex;
         }
 
         /* Backup/Restore Section */
@@ -739,6 +787,32 @@
             background: #f44336;
         }
 
+        .notification.warning {
+            background: #ff9800;
+        }
+
+        /* User Role Badge */
+        .user-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .user-role-badge.admin {
+            background: rgba(106, 17, 203, 0.3);
+            color: #ffd700;
+        }
+
+        .user-role-badge.siswa {
+            background: rgba(37, 117, 252, 0.3);
+            color: #fff;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .login-container, .main-container {
@@ -777,6 +851,50 @@
                 justify-content: center;
             }
         }
+
+        /* Gallery Actions */
+        .gallery-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        /* Photo Count Badge */
+        .photo-count-badge {
+            background: #6a11cb;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
     </style>
 </head>
 <body>
@@ -793,14 +911,14 @@
 
     <!-- Login Form -->
     <div class="login-container" id="loginContainer">
-        <h2><i class="fas fa-camera"></i> Album Foto Sekolah</h2>
+        <h2><i class="fas fa-camera"></i> Album Foto X DKV 3</h2>
         <div class="input-group">
             <label for="username"><i class="fas fa-user"></i> Username</label>
-            <input type="text" id="username" placeholder="Masukkan username">
+            <input type="text" id="username" placeholder="Masukkan username" autocomplete="username">
         </div>
         <div class="input-group">
             <label for="password"><i class="fas fa-lock"></i> Password</label>
-            <input type="password" id="password" placeholder="Masukkan password">
+            <input type="password" id="password" placeholder="Masukkan password" autocomplete="current-password">
         </div>
         <div class="input-group">
             <label for="role"><i class="fas fa-user-tag"></i> Login sebagai</label>
@@ -809,12 +927,20 @@
                 <option value="admin">Admin</option>
             </select>
         </div>
-        <button class="login-btn" id="loginBtn">Masuk ke Album</button>
-        <div class="error-msg" id="errorMsg">Username atau password salah!</div>
+        <button class="login-btn" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i> Masuk ke Album
+        </button>
+        <div class="error-msg" id="errorMsg">
+            <i class="fas fa-exclamation-circle"></i> Username atau password salah!
+        </div>
         
-        <div style="margin-top: 30px; color: #777; font-size: 14px;">
-            <p><strong>Akses Limited</strong> Hanya Siswa Dan Admin</p>
-           
+        <div style="margin-top: 30px; color: #777; font-size: 14px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+            <p><strong><i class="fas fa-info-circle"></i> Akses Login:</strong></p>
+            <p>👨‍💼 <strong>Admin:</strong> username: <code>admin</code> | password: <code>admin123</code></p>
+            <p>👨‍🎓 <strong>Siswa:</strong> username: <code>siswa</code> | password: <code>siswa123</code></p>
+            <p style="margin-top: 10px; color: #666; font-size: 12px;">
+                <i class="fas fa-shield-alt"></i> Data tersimpan secara lokal di browser Anda
+            </p>
         </div>
         
         <!-- Tombol Kembali ke Beranda -->
@@ -830,11 +956,18 @@
         <header>
             <div class="logo">
                 <i class="fas fa-camera-retro"></i>
-                <span>Album Foto Sekolah</span>
+                <div>
+                    <span>Album Foto X DKV 3</span>
+                    <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">
+                        <i class="fas fa-rocket"></i> Menjelajah Semesta Kreativitas
+                    </div>
+                </div>
             </div>
             <div class="user-info">
                 <span id="userRoleDisplay"></span>
-                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
             </div>
         </header>
 
@@ -859,7 +992,7 @@
             <!-- File Preview -->
             <div class="files-preview" id="filesPreview">
                 <div class="preview-title">
-                    <span>File yang Dipilih: <span id="fileCount">0</span></span>
+                    <span><i class="fas fa-images"></i> File yang Dipilih: <span id="fileCount">0</span></span>
                     <span id="totalSize">0 MB</span>
                 </div>
                 <div class="preview-list" id="previewList">
@@ -870,7 +1003,7 @@
             <!-- Progress Bar -->
             <div class="progress-container" id="progressContainer">
                 <div class="progress-header">
-                    <span>Mengupload...</span>
+                    <span><i class="fas fa-sync-alt"></i> Mengupload...</span>
                     <span id="progressPercent">0%</span>
                 </div>
                 <div class="progress-bar">
@@ -881,13 +1014,13 @@
             <!-- Upload Options -->
             <div class="upload-options">
                 <div class="form-group">
-                    <label for="photoAlbum">Album</label>
+                    <label for="photoAlbum"><i class="fas fa-folder"></i> Album</label>
                     <select id="photoAlbum" required>
-                        <option value="kegiatan">Kegiatan Sekolah</option>
-                        <option value="olahraga">Olahraga</option>
-                        <option value="seni">Seni & Budaya</option>
-                        <option value="kelas">Kelas</option>
-                        <option value="lainnya">Lainnya</option>
+                        <option value="kegiatan">🎉 Kegiatan Sekolah</option>
+                        <option value="olahraga">⚽ Olahraga</option>
+                        <option value="seni">🎨 Seni & Budaya</option>
+                        <option value="kelas">🏫 Kelas</option>
+                        <option value="lainnya">✨ Lainnya</option>
                     </select>
                 </div>
                 <div class="upload-actions">
@@ -922,18 +1055,43 @@
 
         <!-- Gallery Section -->
         <div class="gallery-container">
-            <h3><i class="fas fa-images"></i> Galeri Foto <span id="photoCount" style="font-size: 16px; color: #666;">(0 foto)</span></h3>
+            <div class="gallery-actions">
+                <h3><i class="fas fa-images"></i> Galeri Foto 
+                    <span class="photo-count-badge" id="photoCount">0 foto</span>
+                </h3>
+                
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Cari foto...">
+                </div>
+            </div>
             
             <div class="album-filters">
-                <button class="filter-btn active" data-filter="all">Semua</button>
-                <button class="filter-btn" data-filter="kegiatan">Kegiatan Sekolah</button>
-                <button class="filter-btn" data-filter="olahraga">Olahraga</button>
-                <button class="filter-btn" data-filter="seni">Seni & Budaya</button>
-                <button class="filter-btn" data-filter="kelas">Kelas</button>
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-layer-group"></i> Semua
+                </button>
+                <button class="filter-btn" data-filter="kegiatan">
+                    <i class="fas fa-calendar-check"></i> Kegiatan Sekolah
+                </button>
+                <button class="filter-btn" data-filter="olahraga">
+                    <i class="fas fa-running"></i> Olahraga
+                </button>
+                <button class="filter-btn" data-filter="seni">
+                    <i class="fas fa-paint-brush"></i> Seni & Budaya
+                </button>
+                <button class="filter-btn" data-filter="kelas">
+                    <i class="fas fa-chalkboard-teacher"></i> Kelas
+                </button>
             </div>
             
             <div class="gallery-grid" id="galleryGrid">
                 <!-- Foto akan ditampilkan di sini -->
+            </div>
+
+            <div id="noResults" style="display: none; text-align: center; padding: 40px; color: #666;">
+                <i class="fas fa-search" style="font-size: 60px; margin-bottom: 20px; opacity: 0.5;"></i>
+                <h3>Tidak ditemukan foto</h3>
+                <p>Tidak ada foto yang cocok dengan pencarian Anda</p>
             </div>
         </div>
         
@@ -945,10 +1103,11 @@
         </div>
         
         <footer>
-            <p>&copy; 2023 Album Foto Sekolah. Hak Cipta Dilindungi.</p>
-            <p>Dibuat dengan <i class="fas fa-heart" style="color:#ff4757;"></i> untuk pendidikan</p>
+            <p>&copy; 2023-2025 Album Foto X DKV 3. Hak Cipta Dilindungi.</p>
+            <p>Dibuat dengan <i class="fas fa-heart" style="color:#ff4757;"></i> untuk Kelas X DKV 3</p>
             <p style="margin-top: 10px; font-size: 12px;">
-                <i class="fas fa-database"></i> Data tersimpan secara permanen di browser Anda
+                <i class="fas fa-database"></i> Data tersimpan secara permanen di browser Anda | 
+                <i class="fas fa-user-shield"></i> Login diperlukan untuk mengakses
             </p>
         </footer>
     </div>
@@ -965,13 +1124,14 @@
     <script>
         // Data login (dalam aplikasi nyata, ini akan di server)
         const users = {
-            admin: { password: "admin123", role: "admin" },
-            siswa: { password: "siswa123", role: "siswa" }
+            admin: { password: "admin123", role: "admin", name: "Administrator" },
+            siswa: { password: "siswa123", role: "siswa", name: "Siswa X DKV 3" }
         };
 
         // KEY untuk LocalStorage
-        const STORAGE_KEY = 'school_photo_album_data';
-        const NEXT_ID_KEY = 'school_photo_next_id';
+        const STORAGE_KEY = 'xdkv3_photo_album_data';
+        const NEXT_ID_KEY = 'xdkv3_photo_next_id';
+        const USER_SESSION_KEY = 'xdkv3_user_session';
 
         // Data album foto - diambil dari LocalStorage atau default
         let photos = loadPhotosFromStorage();
@@ -995,6 +1155,8 @@
         const galleryGrid = document.getElementById('galleryGrid');
         const filterBtns = document.querySelectorAll('.filter-btn');
         const photoCount = document.getElementById('photoCount');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
         
         // Drag & Drop Elements
         const dragDropArea = document.getElementById('dragDropArea');
@@ -1043,15 +1205,47 @@
             return savedId ? parseInt(savedId) : getDefaultPhotos().length + 1;
         }
 
+        // Load user session from localStorage
+        function loadUserSession() {
+            const sessionData = localStorage.getItem(USER_SESSION_KEY);
+            if (sessionData) {
+                try {
+                    return JSON.parse(sessionData);
+                } catch (e) {
+                    console.error('Error parsing session data:', e);
+                    return null;
+                }
+            }
+            return null;
+        }
+
         // Save photos to localStorage
         function savePhotosToStorage() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
                 localStorage.setItem(NEXT_ID_KEY, nextPhotoId.toString());
-                showNotification('Data foto berhasil disimpan!');
+                return true;
             } catch (e) {
                 console.error('Error saving to localStorage:', e);
-                showNotification('Gagal menyimpan data!', true);
+                showNotification('Gagal menyimpan data!', 'error');
+                return false;
+            }
+        }
+
+        // Save user session to localStorage
+        function saveUserSession(user) {
+            try {
+                const sessionData = {
+                    username: user.username,
+                    role: user.role,
+                    name: user.name,
+                    loginTime: new Date().toISOString()
+                };
+                localStorage.setItem(USER_SESSION_KEY, JSON.stringify(sessionData));
+                return true;
+            } catch (e) {
+                console.error('Error saving session:', e);
+                return false;
             }
         }
 
@@ -1060,64 +1254,83 @@
             return [
                 { 
                     id: 1, 
-                    title: "Upacara Bendera", 
+                    title: "Upacara Bendera X DKV 3", 
                     album: "kegiatan", 
                     date: "2023-09-17", 
-                    url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                    url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    uploader: "Admin",
+                    description: "Upacara bendera perdana kelas X DKV 3"
                 },
                 { 
                     id: 2, 
-                    title: "Pertandingan Futsal", 
+                    title: "Pertandingan Futsal Antar Kelas", 
                     album: "olahraga", 
                     date: "2023-09-15", 
-                    url: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                    url: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    uploader: "Admin",
+                    description: "Tim futsal X DKV 3 sedang bertanding"
                 },
                 { 
                     id: 3, 
-                    title: "Pentas Seni", 
+                    title: "Pentas Seni Kreatif", 
                     album: "seni", 
                     date: "2023-09-10", 
-                    url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                    url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    uploader: "Admin",
+                    description: "Penampilan seni dari siswa X DKV 3"
                 },
                 { 
                     id: 4, 
-                    title: "Belajar di Kelas", 
+                    title: "Sesi Belajar di Kelas", 
                     album: "kelas", 
                     date: "2023-09-05", 
-                    url: "https://images.unsplash.com/photo-1524178234883-043d5c3f3cf4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                    url: "https://images.unsplash.com/photo-1524178234883-043d5c3f3cf4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    uploader: "Admin",
+                    description: "Kegiatan belajar mengajar di kelas"
                 },
                 { 
                     id: 5, 
-                    title: "Karya Seni Siswa", 
+                    title: "Karya Seni Digital", 
                     album: "seni", 
                     date: "2023-08-28", 
-                    url: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                    url: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    uploader: "Admin",
+                    description: "Hasil karya seni digital siswa"
                 },
                 { 
                     id: 6, 
-                    title: "Lomba Basket", 
+                    title: "Lomba Basket Sekolah", 
                     album: "olahraga", 
                     date: "2023-08-25", 
-                    url: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                    url: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    uploader: "Admin",
+                    description: "Tim basket X DKV 3 dalam lomba"
                 }
             ];
         }
 
         // ================== FUNGSI NOTIFICATION ==================
 
-        function showNotification(message, isError = false) {
+        function showNotification(message, type = 'success') {
             notificationText.textContent = message;
             
-            if (isError) {
+            // Reset semua kelas
+            notification.className = 'notification';
+            
+            // Tambah kelas berdasarkan type
+            if (type === 'error') {
                 notification.classList.add('error');
                 notification.querySelector('i').className = 'fas fa-exclamation-circle';
+            } else if (type === 'warning') {
+                notification.classList.add('warning');
+                notification.querySelector('i').className = 'fas fa-exclamation-triangle';
             } else {
-                notification.classList.remove('error');
                 notification.querySelector('i').className = 'fas fa-check-circle';
             }
             
             notification.classList.add('show');
             
+            // Auto hide setelah 3 detik
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
@@ -1130,7 +1343,15 @@
             loadingScreen.style.opacity = '0';
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
-                loginContainer.classList.add('active');
+                
+                // Cek apakah user sudah login
+                const savedSession = loadUserSession();
+                if (savedSession && users[savedSession.username]) {
+                    // Auto login dengan session yang tersimpan
+                    performLogin(savedSession.username, savedSession.role);
+                } else {
+                    loginContainer.classList.add('active');
+                }
             }, 500);
         }, 2000);
 
@@ -1142,67 +1363,102 @@
             
             // Validasi login
             if (users[username] && users[username].password === password && users[username].role === role) {
-                currentUser = { username, role: users[username].role };
-                
-                // Sembunyikan login, tampilkan main container
-                loginContainer.classList.remove('active');
-                mainContainer.classList.add('active');
-                
-                // Tampilkan role user
-                userRoleDisplay.textContent = `Halo, ${username} (${role})`;
-                
-                // Jika admin, tampilkan panel admin
-                if (role === 'admin') {
-                    adminPanel.classList.add('active');
-                    mainContainer.classList.add('admin-view');
-                }
-                
-                // Muat galeri
-                renderGallery('all');
-                updatePhotoCount();
-                errorMsg.style.display = 'none';
+                performLogin(username, role);
             } else {
                 errorMsg.style.display = 'block';
+                // Shake animation untuk error
+                errorMsg.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    errorMsg.style.animation = '';
+                }, 500);
             }
         });
 
+        // Fungsi untuk melakukan login
+        function performLogin(username, role) {
+            currentUser = { 
+                username, 
+                role: users[username].role,
+                name: users[username].name
+            };
+            
+            // Simpan session
+            saveUserSession(currentUser);
+            
+            // Sembunyikan login, tampilkan main container
+            loginContainer.classList.remove('active');
+            mainContainer.classList.add('active');
+            
+            // Tampilkan role user dengan badge
+            const roleBadgeClass = role === 'admin' ? 'admin' : 'siswa';
+            userRoleDisplay.innerHTML = `
+                <strong>${currentUser.name}</strong>
+                <span class="user-role-badge ${roleBadgeClass}">
+                    <i class="fas fa-${role === 'admin' ? 'crown' : 'user-graduate'}"></i>
+                    ${role === 'admin' ? 'Administrator' : 'Siswa'}
+                </span>
+            `;
+            
+            // Jika admin, tampilkan panel admin
+            if (role === 'admin') {
+                adminPanel.classList.add('active');
+                mainContainer.classList.add('admin-view');
+                showNotification('Selamat datang Administrator!', 'success');
+            } else {
+                showNotification(`Selamat datang ${currentUser.name}!`, 'success');
+            }
+            
+            // Muat galeri
+            renderGallery('all');
+            updatePhotoCount();
+            errorMsg.style.display = 'none';
+        }
+
         // Fungsi logout
         logoutBtn.addEventListener('click', () => {
-            currentUser = null;
-            selectedFiles = [];
-            mainContainer.classList.remove('active');
-            mainContainer.classList.remove('admin-view');
-            adminPanel.classList.remove('active');
-            loginContainer.classList.add('active');
-            
-            // Reset form login
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('role').value = 'siswa';
-            
-            // Reset preview
-            clearFilePreview();
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                currentUser = null;
+                selectedFiles = [];
+                localStorage.removeItem(USER_SESSION_KEY);
+                mainContainer.classList.remove('active');
+                mainContainer.classList.remove('admin-view');
+                adminPanel.classList.remove('active');
+                loginContainer.classList.add('active');
+                
+                // Reset form login
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('role').value = 'siswa';
+                
+                // Reset preview
+                clearFilePreview();
+                
+                showNotification('Anda telah logout!', 'success');
+            }
         });
 
-        // Fungsi render galeri
-        function renderGallery(filter = 'all') {
+        // Fungsi render galeri dengan search
+        function renderGallery(filter = 'all', searchQuery = '') {
             galleryGrid.innerHTML = '';
             
-            const filteredPhotos = filter === 'all' 
+            let filteredPhotos = filter === 'all' 
                 ? photos 
                 : photos.filter(photo => photo.album === filter);
             
+            // Apply search filter jika ada query
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filteredPhotos = filteredPhotos.filter(photo => 
+                    photo.title.toLowerCase().includes(query) ||
+                    (photo.description && photo.description.toLowerCase().includes(query))
+                );
+            }
+            
             if (filteredPhotos.length === 0) {
-                galleryGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
-                        <i class="fas fa-images" style="font-size: 60px; margin-bottom: 20px; opacity: 0.5;"></i>
-                        <h3>Tidak ada foto di album ini</h3>
-                        ${currentUser?.role === 'admin' ? 
-                            '<p>Upload foto pertama Anda menggunakan panel admin di atas!</p>' : 
-                            '<p>Admin belum mengupload foto untuk album ini.</p>'}
-                    </div>
-                `;
+                noResults.style.display = 'block';
                 return;
+            } else {
+                noResults.style.display = 'none';
             }
             
             filteredPhotos.forEach(photo => {
@@ -1212,7 +1468,10 @@
                     <img src="${photo.url}" alt="${photo.title}" class="photo-img" loading="lazy">
                     <div class="photo-info">
                         <div class="photo-title">${photo.title}</div>
-                        <div class="photo-date">${formatDate(photo.date)}</div>
+                        <div class="photo-date">
+                            <i class="far fa-calendar-alt"></i> ${formatDate(photo.date)}
+                            ${photo.uploader ? `<br><i class="fas fa-user"></i> ${photo.uploader}` : ''}
+                        </div>
                         ${currentUser?.role === 'admin' ? 
                             `<button class="delete-btn" onclick="deletePhoto(${photo.id})">
                                 <i class="fas fa-trash"></i> Hapus
@@ -1226,7 +1485,8 @@
 
         // Update photo count
         function updatePhotoCount() {
-            photoCount.textContent = `(${photos.length} foto)`;
+            const count = photos.length;
+            photoCount.innerHTML = `<i class="fas fa-camera"></i> ${count} foto`;
         }
 
         // Format tanggal
@@ -1243,8 +1503,16 @@
                 // Tambah class active ke tombol yang diklik
                 btn.classList.add('active');
                 // Render galeri dengan filter yang dipilih
-                renderGallery(btn.getAttribute('data-filter'));
+                const searchQuery = searchInput.value.trim();
+                renderGallery(btn.getAttribute('data-filter'), searchQuery);
             });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const searchQuery = searchInput.value.trim();
+            const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+            renderGallery(activeFilter, searchQuery);
         });
 
         // Fungsi hapus foto (hanya untuk admin)
@@ -1254,7 +1522,7 @@
                 savePhotosToStorage(); // Simpan ke localStorage
                 renderGallery('all'); // Render ulang galeri
                 updatePhotoCount();
-                showNotification('Foto berhasil dihapus!');
+                showNotification('Foto berhasil dihapus!', 'success');
             }
         };
 
@@ -1315,8 +1583,15 @@
                 file.type.startsWith('image/')
             );
             
+            // Validasi ukuran file (max 10MB)
+            const validFiles = imageFiles.filter(file => file.size <= 10 * 1024 * 1024);
+            
+            if (validFiles.length !== imageFiles.length) {
+                showNotification('Beberapa file melebihi batas 10MB dan akan diabaikan', 'warning');
+            }
+            
             // Tambahkan ke selectedFiles
-            selectedFiles.push(...imageFiles);
+            selectedFiles.push(...validFiles);
             
             // Update preview
             updateFilePreview();
@@ -1349,7 +1624,7 @@
                             <div class="file-size">${formatFileSize(file.size)}</div>
                         </div>
                     </div>
-                    <i class="fas fa-times remove-file" data-index="${index}"></i>
+                    <i class="fas fa-times remove-file" data-index="${index}" title="Hapus file"></i>
                 `;
                 previewList.appendChild(fileItem);
             });
@@ -1396,7 +1671,7 @@
 
         async function uploadAllFiles() {
             if (selectedFiles.length === 0) {
-                alert('Pilih file terlebih dahulu!');
+                showNotification('Pilih file terlebih dahulu!', 'warning');
                 return;
             }
             
@@ -1440,7 +1715,9 @@
                             title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
                             album: album,
                             date: new Date().toISOString().split('T')[0],
-                            url: e.target.result // Simpan sebagai data URL
+                            url: e.target.result, // Simpan sebagai data URL
+                            uploader: currentUser.name,
+                            description: `Diupload oleh ${currentUser.name} pada ${new Date().toLocaleDateString('id-ID')}`
                         };
                         
                         photos.unshift(newPhoto); // Tambahkan di awal array
@@ -1459,7 +1736,7 @@
                 clearFilePreview();
                 
                 // Tampilkan notifikasi sukses
-                showNotification(`Berhasil mengupload ${selectedFiles.length} foto ke album ${albumNames[album]}!`);
+                showNotification(`Berhasil mengupload ${selectedFiles.length} foto ke album ${albumNames[album]}!`, 'success');
             }, 500);
         }
 
@@ -1482,20 +1759,22 @@
                 photos: photos,
                 nextId: nextPhotoId,
                 exportedAt: new Date().toISOString(),
-                totalPhotos: photos.length
+                totalPhotos: photos.length,
+                class: "X DKV 3",
+                school: "SMK N 1 CLUWAK"
             };
             
             const dataStr = JSON.stringify(backupData, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            const exportFileDefaultName = `backup_foto_sekolah_${new Date().toISOString().split('T')[0]}.json`;
+            const exportFileDefaultName = `backup_foto_xdkv3_${new Date().toISOString().split('T')[0]}.json`;
             
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
             
-            showNotification('Backup data berhasil diekspor!');
+            showNotification('Backup data berhasil diekspor!', 'success');
         });
 
         // Restore data from JSON file
@@ -1530,12 +1809,12 @@
                     renderGallery('all');
                     updatePhotoCount();
                     
-                    showNotification(`Data berhasil direstore! ${photos.length} foto telah dimuat.`);
+                    showNotification(`Data berhasil direstore! ${photos.length} foto telah dimuat.`, 'success');
                     
                     // Reset input file
                     restoreFileInput.value = '';
                 } catch (error) {
-                    showNotification('Gagal memuat file backup! Format tidak valid.', true);
+                    showNotification('Gagal memuat file backup! Format tidak valid.', 'error');
                     console.error('Restore error:', error);
                 }
             };
@@ -1551,8 +1830,6 @@
 
         // Handle import (sama file input dengan restore)
         restoreFileInput.addEventListener('change', function(e) {
-            // For import, we need to check which button was clicked last
-            // This is simplified - in real app you'd have separate inputs
             const file = e.target.files[0];
             if (!file) return;
             
@@ -1571,7 +1848,8 @@
                         const newPhoto = {
                             ...photo,
                             id: nextPhotoId++,
-                            date: photo.date || new Date().toISOString().split('T')[0]
+                            date: photo.date || new Date().toISOString().split('T')[0],
+                            uploader: photo.uploader || currentUser.name
                         };
                         photos.unshift(newPhoto);
                     });
@@ -1583,12 +1861,12 @@
                     renderGallery('all');
                     updatePhotoCount();
                     
-                    showNotification(`Berhasil mengimpor ${importData.photos.length} foto!`);
+                    showNotification(`Berhasil mengimpor ${importData.photos.length} foto!`, 'success');
                     
                     // Reset input file
                     restoreFileInput.value = '';
                 } catch (error) {
-                    showNotification('Gagal mengimpor file! Format tidak valid.', true);
+                    showNotification('Gagal mengimpor file! Format tidak valid.', 'error');
                     console.error('Import error:', error);
                 }
             };
@@ -1611,8 +1889,42 @@
         // Cek data di localStorage saat load
         window.addEventListener('load', () => {
             const savedCount = photos.length;
-            console.log(`Memuat ${savedCount} foto dari penyimpanan lokal`);
+            console.log(`📸 X DKV 3 Album Foto: Memuat ${savedCount} foto dari penyimpanan lokal`);
+            
+            // Tambahkan style untuk shake animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
         });
+
+        // Debug function untuk developers
+        window.debugAlbum = function() {
+            console.log('=== DEBUG X DKV 3 ALBUM ===');
+            console.log('Total Photos:', photos.length);
+            console.log('Next Photo ID:', nextPhotoId);
+            console.log('Current User:', currentUser);
+            console.log('LocalStorage Usage:', JSON.stringify(localStorage).length + ' bytes');
+            console.log('Selected Files:', selectedFiles.length);
+            console.log('==========================');
+        };
+
+        // Export function untuk debugging
+        window.exportAlbumData = function() {
+            return {
+                photos: photos,
+                metadata: {
+                    count: photos.length,
+                    nextId: nextPhotoId,
+                    timestamp: new Date().toISOString()
+                }
+            };
+        };
     </script>
 </body>
 </html>
