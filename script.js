@@ -705,4 +705,37 @@ const newPhoto = {
 // Untuk developer/testing
 window.debugAlbum(); // Lihat semua data di console
 window.exportAlbumData(); // Export data ke console
+}
+<!-- Tambahkan link di navigation -->
+<li><a href="storageLocal.html"><i class="fas fa-database"></i> Storage Manager</a></li>
+}
+// Tambahkan fungsi backup otomatis
+function autoBackupToManager() {
+    const backupData = {
+        timestamp: new Date().toISOString(),
+        app: 'Album Foto X DKV 3',
+        data: photos
+    };
+    
+    localStorage.setItem('xdkv3_album_backup', JSON.stringify(backupData));
+}
+// Contoh aturan auto-cleanup
+const cleanupRules = {
+    'temp_': 24 * 60 * 60 * 1000, // Hapus setelah 24 jam
+    'cache_': 7 * 24 * 60 * 60 * 1000, // Hapus setelah 7 hari
+    'session_': 30 * 60 * 1000 // Hapus setelah 30 menit
+};
+// Tambahkan ke aplikasi lain untuk integrasi
+window.lsManagerAPI = {
+    // Backup data dari aplikasi
+    backupAppData: function(appName, data) {
+        localStorage.setItem(`backup_${appName}_${Date.now()}`, JSON.stringify(data));
+    },
+    
+    // Restore data ke aplikasi
+    restoreAppData: function(appName) {
+        const keys = Object.keys(localStorage).filter(key => key.startsWith(`backup_${appName}_`));
+        return keys.map(key => JSON.parse(localStorage.getItem(key)));
+    }
+};
 
