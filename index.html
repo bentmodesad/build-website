@@ -8,12 +8,154 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3ctext y='.9em' font-size='90'%3e🚀%3c/text%3e%3c/svg%3e">
     <style>
-
+        /* Animasi fade in untuk galeri */
+        .galeri-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .galeri-item.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Style untuk loaded/error state */
+        .galeri-item.loaded img {
+            border: 2px solid #2ed573;
+        }
+        
+        .galeri-item.error img {
+            border: 2px solid #ff4757;
+            filter: grayscale(100%);
+        }
+        
+        .galeri-item.timeout img {
+            border: 2px solid #ffa502;
+            opacity: 0.6;
+        }
+        
+        /* Tema Gelap */
+        body.dark-theme {
+            background: #0a0a1a;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .container {
+            background: rgba(10, 10, 26, 0.9);
+        }
+        
+        body.dark-theme .motivasi-card,
+        body.dark-theme .pengumuman-card {
+            background: rgba(30, 30, 60, 0.8);
+        }
+        
+        /* Cookie Consent */
+        .cookie-consent {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            left: 20px;
+            max-width: 400px;
+            background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .cookie-consent.show {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .cookie-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .cookie-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .cookie-accept {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .cookie-decline {
+            background: #f44336;
+            color: white;
+        }
+        
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(74, 144, 226, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Visitor Counter */
+        .visitor-counter {
+            background: rgba(74, 144, 226, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <!-- Background Stars -->
     <div class="stars" id="stars"></div>
+    
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <!-- Cookie Consent -->
+    <div class="cookie-consent" id="cookieConsent">
+        <p><i class="fas fa-cookie-bite"></i> Website ini menggunakan cookies untuk menyimpan preferensi Anda.</p>
+        <div class="cookie-buttons">
+            <button class="cookie-btn cookie-accept" id="acceptCookies">Terima</button>
+            <button class="cookie-btn cookie-decline" id="declineCookies">Tolak</button>
+        </div>
+    </div>
     
     <div class="container">
         <header>
@@ -52,6 +194,10 @@
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i>
                 Ini adalah halaman utama. Login/registrasi agar bisa mengakses.
+                <div class="visitor-counter">
+                    <i class="fas fa-user-astronaut"></i>
+                    Pengunjung: <span id="visitorCount">0</span>
+                </div>
             </div>
             
             <section class="hero">
@@ -97,8 +243,6 @@
                 </div>
             </section>
             
-
-            
             <section class="pengumuman-section">
                 <div class="section-title">
                     <i class="fas fa-bullhorn"></i>
@@ -131,6 +275,45 @@
                         </div>
                         <h4>Pembagian Raport Semester</h4>
                         <p>Pembagian raport semester ganjil akan dilaksanakan pada Sabtu, 23 Desember 2025 pukul 08.00 di aula sekolah.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- User Preferences Section -->
+            <section class="preferences-section" style="margin-top: 50px; background: rgba(74, 144, 226, 0.05); padding: 20px; border-radius: 10px; display: none;" id="preferencesSection">
+                <div class="section-title">
+                    <i class="fas fa-user-cog"></i>
+                    <h3>Preferensi Anda</h3>
+                </div>
+                
+                <div class="preferences-grid">
+                    <div class="preference-item">
+                        <label><i class="fas fa-palette"></i> Warna Tema</label>
+                        <div class="color-picker">
+                            <button class="color-option" data-color="#4a90e2" style="background: #4a90e2;"></button>
+                            <button class="color-option" data-color="#9b59b6" style="background: #9b59b6;"></button>
+                            <button class="color-option" data-color="#e74c3c" style="background: #e74c3c;"></button>
+                            <button class="color-option" data-color="#2ecc71" style="background: #2ecc71;"></button>
+                            <button class="color-option" data-color="#f39c12" style="background: #f39c12;"></button>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-item">
+                        <label><i class="fas fa-bell"></i> Notifikasi</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="notifToggle">
+                            <label for="notifToggle" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-item">
+                        <label><i class="fas fa-font"></i> Ukuran Font</label>
+                        <select id="fontSizeSelect">
+                            <option value="14">Kecil</option>
+                            <option value="16" selected>Normal</option>
+                            <option value="18">Besar</option>
+                            <option value="20">Sangat Besar</option>
+                        </select>
                     </div>
                 </div>
             </section>
@@ -179,73 +362,538 @@
                 <p class="footer-note">
                     <i class="fas fa-satellite-dish"></i> Terhubung dengan semesta kreativitas
                 </p>
+                <p style="font-size: 12px; margin-top: 10px; opacity: 0.7;">
+                    <i class="fas fa-cookie"></i> Cookies diterima: <span id="cookieStatus">Tidak</span> | 
+                    <i class="fas fa-moon"></i> Tema gelap: <span id="themeStatus">Tidak</span>
+                </p>
             </div>
         </footer>
     </div>
     
     <script src="script.js"></script>
     <script>
-        // Cek status login dari localStorage
+        // ==================== LOCALSTORAGE MANAGER ====================
+        
+        // Keys untuk localStorage
+        const STORAGE_KEYS = {
+            USERNAME: 'dkv3_username',
+            LOGGED_IN: 'dkv3_loggedIn',
+            VISIT_COUNT: 'dkv3_visitCount',
+            COOKIE_CONSENT: 'dkv3_cookieConsent',
+            DARK_MODE: 'dkv3_darkMode',
+            ACCENT_COLOR: 'dkv3_accentColor',
+            FONT_SIZE: 'dkv3_fontSize',
+            NOTIFICATIONS: 'dkv3_notifications'
+        };
+        
+        // Fungsi untuk menyimpan data ke localStorage
+        function saveToStorage(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+                return true;
+            } catch (error) {
+                console.error('Gagal menyimpan ke localStorage:', error);
+                return false;
+            }
+        }
+        
+        // Fungsi untuk mengambil data dari localStorage
+        function getFromStorage(key, defaultValue = null) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (error) {
+                console.error('Gagal membaca dari localStorage:', error);
+                return defaultValue;
+            }
+        }
+        
+        // Fungsi untuk menghapus data dari localStorage
+        function removeFromStorage(key) {
+            localStorage.removeItem(key);
+        }
+        
+        // Fungsi untuk menghapus semua data (clear)
+        function clearStorage() {
+            localStorage.clear();
+        }
+        
+        // ==================== FUNGSI UTAMA APLIKASI ====================
+        
+        // 1. Visitor Counter
+        function updateVisitorCount() {
+            let visitCount = getFromStorage(STORAGE_KEYS.VISIT_COUNT, 0);
+            visitCount++;
+            saveToStorage(STORAGE_KEYS.VISIT_COUNT, visitCount);
+            
+            // Update tampilan
+            document.getElementById('visitorCount').textContent = visitCount;
+            
+            // Tampilkan pesan khusus untuk pengunjung tertentu
+            if (visitCount === 1) {
+                console.log('🎉 Selamat datang pengunjung pertama!');
+            } else if (visitCount === 10) {
+                console.log('🎊 Anda sudah mengunjungi 10 kali!');
+            } else if (visitCount === 50) {
+                console.log('🏆 Super fans! Sudah 50 kunjungan!');
+            }
+        }
+        
+        // 2. Cookie Consent
+        function checkCookieConsent() {
+            const consentGiven = getFromStorage(STORAGE_KEYS.COOKIE_CONSENT, false);
+            
+            if (!consentGiven) {
+                // Tampilkan cookie consent setelah 2 detik
+                setTimeout(() => {
+                    document.getElementById('cookieConsent').classList.add('show');
+                }, 2000);
+            }
+            
+            // Update status di footer
+            document.getElementById('cookieStatus').textContent = consentGiven ? 'Ya' : 'Tidak';
+            
+            return consentGiven;
+        }
+        
+        // 3. Dark Mode
+        function toggleDarkMode() {
+            const isDarkMode = getFromStorage(STORAGE_KEYS.DARK_MODE, false);
+            const newMode = !isDarkMode;
+            
+            saveToStorage(STORAGE_KEYS.DARK_MODE, newMode);
+            applyDarkMode(newMode);
+            
+            // Update tombol
+            const toggleIcon = document.querySelector('#themeToggle i');
+            toggleIcon.className = newMode ? 'fas fa-sun' : 'fas fa-moon';
+            
+            // Update status di footer
+            document.getElementById('themeStatus').textContent = newMode ? 'Ya' : 'Tidak';
+            
+            return newMode;
+        }
+        
+        function applyDarkMode(isDarkMode) {
+            if (isDarkMode) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+        
+        // 4. Accent Color
+        function setAccentColor(color) {
+            saveToStorage(STORAGE_KEYS.ACCENT_COLOR, color);
+            
+            // Terapkan warna ke CSS variables
+            document.documentElement.style.setProperty('--primary-color', color);
+            
+            // Simpan warna yang dipilih
+            console.log(`Warna aksen diubah ke: ${color}`);
+        }
+        
+        // 5. Font Size
+        function setFontSize(size) {
+            saveToStorage(STORAGE_KEYS.FONT_SIZE, size);
+            document.body.style.fontSize = `${size}px`;
+        }
+        
+        // 6. Notifications
+        function setNotifications(enabled) {
+            saveToStorage(STORAGE_KEYS.NOTIFICATIONS, enabled);
+            
+            if (enabled && 'Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    console.log(`Izin notifikasi: ${permission}`);
+                });
+            }
+        }
+        
+        // ==================== INISIALISASI SAAT PAGE LOAD ====================
+        
         document.addEventListener('DOMContentLoaded', function() {
-            const username = localStorage.getItem('dkv3_username');
+            console.log('🚀 X DKV 3 - Inisialisasi localStorage...');
+            
+            // A. Cek dan update status login
+            const username = getFromStorage(STORAGE_KEYS.USERNAME);
+            const loggedIn = getFromStorage(STORAGE_KEYS.LOGGED_IN, false);
             const displayElement = document.getElementById('displayUsername');
             
-            if (username) {
+            if (username && loggedIn) {
                 displayElement.textContent = username;
                 displayElement.innerHTML = `<strong>${username}</strong>`;
                 
                 // Update tombol login/logout
                 const authButtons = document.querySelector('.auth-buttons');
                 authButtons.innerHTML = `
-                    <span style="color: var(--accent-light); margin-right: 10px;">
+                    <span style="color: var(--primary-color, #4a90e2); margin-right: 10px;">
                         <i class="fas fa-user-astronaut"></i> ${username}
                     </span>
                     <a href="#" class="btn-logout" onclick="logout()">Logout</a>
                 `;
+                
+                // Tampilkan section preferensi untuk user yang login
+                document.getElementById('preferencesSection').style.display = 'block';
             }
             
-
+            // B. Visitor counter
+            updateVisitorCount();
+            
+            // C. Cookie consent
+            checkCookieConsent();
+            
+            // D. Load pengaturan tema
+            const isDarkMode = getFromStorage(STORAGE_KEYS.DARK_MODE, false);
+            applyDarkMode(isDarkMode);
+            
+            // Update tombol tema
+            const toggleIcon = document.querySelector('#themeToggle i');
+            toggleIcon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+            
+            // E. Load warna aksen
+            const accentColor = getFromStorage(STORAGE_KEYS.ACCENT_COLOR, '#4a90e2');
+            setAccentColor(accentColor);
+            
+            // F. Load ukuran font
+            const fontSize = getFromStorage(STORAGE_KEYS.FONT_SIZE, '16');
+            setFontSize(fontSize);
+            
+            // G. Load notifikasi
+            const notifications = getFromStorage(STORAGE_KEYS.NOTIFICATIONS, false);
+            document.getElementById('notifToggle').checked = notifications;
+            
+            // H. Load font size select
+            document.getElementById('fontSizeSelect').value = fontSize;
+            
+            // I. Update status di footer
+            document.getElementById('cookieStatus').textContent = getFromStorage(STORAGE_KEYS.COOKIE_CONSENT, false) ? 'Ya' : 'Tidak';
+            document.getElementById('themeStatus').textContent = isDarkMode ? 'Ya' : 'Tidak';
+            
+            // J. Event listeners
+            setupEventListeners();
+            
+            // K. Debug: Tampilkan semua data localStorage
+            console.log('📊 Data localStorage saat ini:');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                console.log(`${key}: ${value}`);
+            }
+            
+            // L. Welcome message berdasarkan waktu
+            showWelcomeMessage();
         });
-
-
-
+        
+        // ==================== EVENT LISTENERS ====================
+        
+        function setupEventListeners() {
+            // 1. Cookie consent buttons
+            document.getElementById('acceptCookies').addEventListener('click', function() {
+                saveToStorage(STORAGE_KEYS.COOKIE_CONSENT, true);
+                document.getElementById('cookieConsent').classList.remove('show');
+                document.getElementById('cookieStatus').textContent = 'Ya';
+                showNotification('Cookies diterima!', 'success');
+            });
+            
+            document.getElementById('declineCookies').addEventListener('click', function() {
+                saveToStorage(STORAGE_KEYS.COOKIE_CONSENT, false);
+                document.getElementById('cookieConsent').classList.remove('show');
+                document.getElementById('cookieStatus').textContent = 'Tidak';
+                showNotification('Cookies ditolak. Beberapa fitur mungkin tidak tersedia.', 'warning');
+            });
+            
+            // 2. Dark mode toggle
+            document.getElementById('themeToggle').addEventListener('click', function() {
+                const newMode = toggleDarkMode();
+                showNotification(`Tema ${newMode ? 'gelap' : 'terang'} diaktifkan`, 'info');
+            });
+            
+            // 3. Color picker
+            document.querySelectorAll('.color-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    const color = this.getAttribute('data-color');
+                    setAccentColor(color);
+                    showNotification(`Warna tema diubah ke ${color}`, 'success');
+                });
+            });
+            
+            // 4. Font size select
+            document.getElementById('fontSizeSelect').addEventListener('change', function() {
+                setFontSize(this.value);
+                showNotification(`Ukuran font diubah ke ${this.value}px`, 'info');
+            });
+            
+            // 5. Notifications toggle
+            document.getElementById('notifToggle').addEventListener('change', function() {
+                setNotifications(this.checked);
+                showNotification(`Notifikasi ${this.checked ? 'diaktifkan' : 'dimatikan'}`, 'info');
+            });
+            
+            // 6. Save preferences button
+            const savePrefsBtn = document.createElement('button');
+            savePrefsBtn.textContent = 'Simpan Preferensi';
+            savePrefsBtn.style.cssText = `
+                background: var(--primary-color, #4a90e2);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 20px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            `;
+            savePrefsBtn.onclick = function() {
+                showNotification('Preferensi disimpan!', 'success');
+                setTimeout(() => {
+                    alert('Preferensi Anda telah disimpan di browser ini.');
+                }, 500);
+            };
+            
+            document.getElementById('preferencesSection').appendChild(savePrefsBtn);
+        }
+        
+        // ==================== FUNGSI BANTUAN ====================
+        
+        // Fungsi logout
         function logout() {
-            localStorage.removeItem('dkv3_username');
-            localStorage.removeItem('dkv3_loggedIn');
-            alert('Anda telah logout!');
-            window.location.href = 'index.html';
-        }
-        
-
-    </script>
-    
-    <style>
-        /* Animasi fade in untuk galeri */
-        .galeri-item {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        
-        .galeri-item.fade-in {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Style untuk loaded/error state */
-        .galeri-item.loaded img {
-            border: 2px solid #2ed573;
-        }
-        
-                .galeri-item.error img {
-                    border: 2px solid #ff4757;
-                    filter: grayscale(100%);
-                }
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                removeFromStorage(STORAGE_KEYS.USERNAME);
+                removeFromStorage(STORAGE_KEYS.LOGGED_IN);
                 
-                .galeri-item.timeout img {
-                    border: 2px solid #ffa502;
-                    opacity: 0.6;
+                showNotification('Anda telah logout!', 'info');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        }
+        
+        // Fungsi untuk menampilkan notifikasi
+        function showNotification(message, type = 'info') {
+            // Buat elemen notifikasi
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            
+            // Set warna berdasarkan type
+            const colors = {
+                success: '#2ed573',
+                error: '#ff4757',
+                warning: '#ffa502',
+                info: '#2f3542'
+            };
+            
+            notification.style.background = colors[type] || colors.info;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            
+            // Tambahkan ke body
+            document.body.appendChild(notification);
+            
+            // Hapus setelah 3 detik
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+            
+            // Tambahkan style untuk animasi
+            if (!document.querySelector('#notificationStyles')) {
+                const style = document.createElement('style');
+                style.id = 'notificationStyles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        
+        // Fungsi untuk menampilkan welcome message berdasarkan waktu
+        function showWelcomeMessage() {
+            const hour = new Date().getHours();
+            let message = '';
+            
+            if (hour >= 5 && hour < 12) {
+                message = 'Selamat pagi astronaut kreatif! ☀️';
+            } else if (hour >= 12 && hour < 15) {
+                message = 'Selamat siang explorer! 🚀';
+            } else if (hour >= 15 && hour < 18) {
+                message = 'Selamat sore penjelajah! 🌇';
+            } else {
+                message = 'Selamat malam, siap melihat bintang? 🌙';
+            }
+            
+            // Tampilkan di console
+            console.log(`%c${message}`, 'color: #4a90e2; font-size: 16px; font-weight: bold;');
+            
+            // Optional: Tampilkan sebagai notifikasi kecil
+            if (getFromStorage(STORAGE_KEYS.VISIT_COUNT) <= 3) {
+                setTimeout(() => {
+                    showNotification(message, 'info');
+                }, 1000);
+            }
+        }
+        
+        // ==================== FUNGSI UNTUK DEBUGGING ====================
+        
+        // Fungsi untuk melihat semua data localStorage (bisa diakses dari console)
+        window.showAllStorageData = function() {
+            console.log('📦 SEMUA DATA LOCALSTORAGE:');
+            console.log('===========================');
+            
+            if (localStorage.length === 0) {
+                console.log('Tidak ada data di localStorage');
+                return;
+            }
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                try {
+                    const parsedValue = JSON.parse(value);
+                    console.log(`${key}:`, parsedValue);
+                } catch {
+                    console.log(`${key}: "${value}"`);
                 }
-            </style>
-        </body>
-        </html>
+            }
+            
+            console.log('===========================');
+            console.log(`Total: ${localStorage.length} item`);
+            
+            // Hitung total ukuran
+            let totalSize = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                totalSize += key.length + value.length;
+            }
+            console.log(`Ukuran total: ${totalSize} karakter (≈ ${(totalSize / 1024).toFixed(2)} KB)`);
+        };
+        
+        // Fungsi untuk menghapus data lama (lebih dari 30 hari)
+        window.cleanOldData = function() {
+            const now = Date.now();
+            const oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000);
+            let cleaned = 0;
+            
+            // Catatan: Ini contoh, butuh timestamp di data
+            console.log('Membersihkan data lama...');
+            
+            // Contoh: hapus data dengan pola tertentu
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('temp_') || key.startsWith('cache_')) {
+                    localStorage.removeItem(key);
+                    cleaned++;
+                    console.log(`Dihapus: ${key}`);
+                }
+            }
+            
+            console.log(`✅ ${cleaned} item data lama dibersihkan`);
+            return cleaned;
+        };
+        
+        // Fungsi backup data ke file JSON
+        window.backupStorageData = function() {
+            const backupData = {};
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                backupData[key] = value;
+            }
+            
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `backup_dkv3_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Backup data berhasil!', 'success');
+            return backupData;
+        };
+        
+        // ==================== CONTOH PENGGUNAAN LAIN ====================
+        
+        // Contoh: Menyimpan riwayat navigasi
+        function saveNavigationHistory(page) {
+            const history = getFromStorage('navigation_history', []);
+            
+            // Tambahkan page ke riwayat dengan timestamp
+            history.push({
+                page: page,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Simpan maksimal 50 item
+            if (history.length > 50) {
+                history.shift();
+            }
+            
+            saveToStorage('navigation_history', history);
+        }
+        
+        // Contoh: Menyimpan pengaturan kustom user
+        function saveCustomSettings() {
+            const settings = {
+                showMotivation: true,
+                showAnnouncements: true,
+                showGallery: true,
+                animationSpeed: 'normal',
+                language: 'id',
+                timezone: 'Asia/Jakarta'
+            };
+            
+            saveToStorage('user_settings', settings);
+            return settings;
+        }
+        
+        // Simpan data saat page di-tutup
+        window.addEventListener('beforeunload', function() {
+            // Catat waktu kunjungan terakhir
+            saveToStorage('last_visit', new Date().toISOString());
+            
+            // Simpan posisi scroll (untuk single page apps)
+            saveToStorage('scroll_position', window.scrollY);
+        });
+        
+        // Restore scroll position saat page dibuka
+        window.addEventListener('load', function() {
+            const savedScroll = getFromStorage('scroll_position', 0);
+            if (savedScroll > 0) {
+                setTimeout(() => {
+                    window.scrollTo(0, savedScroll);
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
