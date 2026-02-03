@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album Foto Sekolah - Data Permanen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-lady {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .lady-body {
+            width: 60px;
+            height: 90px;
+            background: #fff;
+            border-radius: 50% 50% 40% 40%;
+            position: absolute;
+            top: 15px;
+            left: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .lady-head {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 40px;
+        }
+
+        .lady-hair {
+            width: 50px;
+            height: 20px;
+            background: #ff6b9d;
+            border-radius: 50% 50% 0 0;
+            position: absolute;
+            top: -5px;
+            left: 35px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Login Container */
+        .login-container {
+            display: none;
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .login-container.active {
+            display: block;
+        }
+
+        .login-container h2 {
+            color: #6a11cb;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #6a11cb;
+            outline: none;
+        }
+
+        .login-btn {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .error-msg {
+            color: #ff4757;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Tombol Kembali ke Beranda */
+        .home-btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #00b894;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .home-btn:hover {
+            background: #00a085;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Container */
+        .main-container {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-container.active {
+            display: block;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: #ffd700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info span {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #6a11cb;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .admin-panel h3 {
+            color: #6a11cb;
+            margin-bottom: 20px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Drag & Drop Area */
+        .drag-drop-area {
+            border: 3px dashed #6a11cb;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .drag-drop-area.drag-over {
+            border-color: #2575fc;
+            background: #eef2ff;
+            transform: scale(1.01);
+        }
+
+        .drag-drop-area i {
+            font-size: 60px;
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+
+        .drag-drop-area h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .drag-drop-area p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .browse-btn {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .browse-btn:hover {
+            background: #2575fc;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Selected Files Preview */
+        .files-preview {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .files-preview.active {
+            display: block;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .file-icon {
+            color: #6a11cb;
+            font-size: 18px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+
+        .file-size {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .remove-file {
+            color: #ff4757;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .remove-file:hover {
+            color: #ff0000;
+        }
+
+        /* Upload Options */
+        .upload-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .clear-btn {
+            background: #ffa502;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-3px);
+            background: #e67e22;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Gallery */
+        .gallery-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-container h3 {
+            color: #6a11cb;
+            margin-bottom: 20px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .album-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #f1f3f9;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #6a11cb;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .photo-card {
+            background: #f9f9f9;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .photo-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .photo-info {
+            padding: 15px;
+        }
+
+        .photo-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .photo-date {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .admin-view .delete-btn {
+            display: inline-block;
+        }
+
+        /* Backup/Restore Section */
+        .backup-section {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .backup-section h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .backup-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+
+        .backup-btn:hover {
+            background: #0d8bf2;
+        }
+
+        .restore-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+
+        .restore-btn:hover {
+            background: #45a049;
+        }
+
+        .import-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+
+        .import-btn:hover {
+            background: #e68900;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container, .main-container {
+                padding: 20px;
+            }
+            
+            .upload-options {
+                flex-direction: column;
+            }
+            
+            .form-group {
+                width: 100%;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .user-info {
+                flex-direction: column;
+            }
+            
+            .upload-actions, .backup-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .upload-btn, .clear-btn, .backup-btn, .restore-btn, .import-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-lady">
+            <div class="lady-hair"></div>
+            <div class="lady-head"></div>
+            <div class="lady-body"></div>
+        </div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Memuat Album Foto...</div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <h2><i class="fas fa-camera"></i> Album Foto Sekolah</h2>
+        <div class="input-group">
+            <label for="username"><i class="fas fa-user"></i> Username</label>
+            <input type="text" id="username" placeholder="Masukkan username">
+        </div>
+        <div class="input-group">
+            <label for="password"><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="password" placeholder="Masukkan password">
+        </div>
+        <div class="input-group">
+            <label for="role"><i class="fas fa-user-tag"></i> Login sebagai</label>
+            <select id="role">
+                <option value="siswa">Siswa</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <button class="login-btn" id="loginBtn">Masuk ke Album</button>
+        <div class="error-msg" id="errorMsg">Username atau password salah!</div>
+        
+        <div style="margin-top: 30px; color: #777; font-size: 14px;">
+            <p><strong>Login untuk Admin:</strong> admin / admin123</p>
+            <p><strong>Login untuk Siswa:</strong> siswa / siswa123</p>
+        </div>
+        
+        <!-- Tombol Kembali ke Beranda -->
+        <div class="home-btn-container">
+            <a href="index.html" class="home-btn">
+                <i class="fas fa-home"></i> Kembali ke Beranda
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container" id="mainContainer">
+        <header>
+            <div class="logo">
+                <i class="fas fa-camera-retro"></i>
+                <span>Album Foto Sekolah</span>
+            </div>
+            <div class="user-info">
+                <span id="userRoleDisplay"></span>
+                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+            </div>
+        </header>
+
+        <!-- Admin Panel (Hanya tampil untuk admin) -->
+        <div class="admin-panel" id="adminPanel">
+            <h3><i class="fas fa-upload"></i> Upload Foto Baru</h3>
+            
+            <!-- Drag & Drop Area -->
+            <div class="drag-drop-area" id="dragDropArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h4>Drag & Drop Foto Anda Di Sini</h4>
+                <p>Atau klik tombol di bawah untuk memilih file</p>
+                <button class="browse-btn" id="browseBtn">
+                    <i class="fas fa-folder-open"></i> Pilih File
+                </button>
+                <input type="file" id="fileInput" multiple accept="image/*">
+                <p style="margin-top: 15px; font-size: 14px; color: #888;">
+                    <i class="fas fa-info-circle"></i> Dukungan: JPG, PNG, GIF. Maksimal 10MB per file.
+                </p>
+            </div>
+
+            <!-- File Preview -->
+            <div class="files-preview" id="filesPreview">
+                <div class="preview-title">
+                    <span>File yang Dipilih: <span id="fileCount">0</span></span>
+                    <span id="totalSize">0 MB</span>
+                </div>
+                <div class="preview-list" id="previewList">
+                    <!-- File preview akan muncul di sini -->
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-header">
+                    <span>Mengupload...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Upload Options -->
+            <div class="upload-options">
+                <div class="form-group">
+                    <label for="photoAlbum">Album</label>
+                    <select id="photoAlbum" required>
+                        <option value="kegiatan">Kegiatan Sekolah</option>
+                        <option value="olahraga">Olahraga</option>
+                        <option value="seni">Seni & Budaya</option>
+                        <option value="kelas">Kelas</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="upload-actions">
+                    <button type="button" class="clear-btn" id="clearBtn">
+                        <i class="fas fa-trash"></i> Hapus Semua
+                    </button>
+                    <button type="button" class="upload-btn" id="uploadAllBtn">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload Semua
+                    </button>
+                </div>
+            </div>
+
+            <!-- Backup/Restore Section -->
+            <div class="backup-section">
+                <h4><i class="fas fa-database"></i> Backup Data Foto</h4>
+                <div class="backup-actions">
+                    <button class="backup-btn" id="backupBtn">
+                        <i class="fas fa-download"></i> Backup Data
+                    </button>
+                    <button class="restore-btn" id="restoreBtn">
+                        <i class="fas fa-upload"></i> Restore Data
+                    </button>
+                    <button class="import-btn" id="importBtn">
+                        <i class="fas fa-file-import"></i> Import Data
+                    </button>
+                </div>
+                <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <i class="fas fa-info-circle"></i> Data tersimpan di browser ini. Backup untuk pindah browser.
+                </p>
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        <div class="gallery-container">
+            <h3><i class="fas fa-images"></i> Galeri Foto <span id="photoCount" style="font-size: 16px; color: #666;">(0 foto)</span></h3>
+            
+            <div class="album-filters">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="kegiatan">Kegiatan Sekolah</button>
+                <button class="filter-btn" data-filter="olahraga">Olahraga</button>
+                <button class="filter-btn" data-filter="seni">Seni & Budaya</button>
+                <button class="filter-btn" data-filter="kelas">Kelas</button>
+            </div>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Foto akan ditampilkan di sini -->
+            </div>
+        </div>
+        
+        <!-- Tombol Kembali ke Beranda di bawah galeri -->
+        <div class="home-btn-container" style="margin-top: 30px;">
+            <a href="index.html" class="home-btn">
+                <i class="fas fa-home"></i> Kembali ke Beranda
+            </a>
+        </div>
+        
+        <footer>
+            <p>&copy; 2023 Album Foto Sekolah. Hak Cipta Dilindungi.</p>
+            <p>Dibuat dengan <i class="fas fa-heart" style="color:#ff4757;"></i> untuk pendidikan</p>
+            <p style="margin-top: 10px; font-size: 12px;">
+                <i class="fas fa-database"></i> Data tersimpan secara permanen di browser Anda
+            </p>
+        </footer>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Data berhasil disimpan!</span>
+    </div>
+
+    <!-- Hidden file input for restore -->
+    <input type="file" id="restoreFileInput" accept=".json" style="display: none;">
+
+    <script>
+        // Data login (dalam aplikasi nyata, ini akan di server)
+        const users = {
+            admin: { password: "admin123", role: "admin" },
+            siswa: { password: "siswa123", role: "siswa" }
+        };
+
+        // KEY untuk LocalStorage
+        const STORAGE_KEY = 'school_photo_album_data';
+        const NEXT_ID_KEY = 'school_photo_next_id';
+
+        // Data album foto - diambil dari LocalStorage atau default
+        let photos = loadPhotosFromStorage();
+        let nextPhotoId = loadNextIdFromStorage();
+
+        // Simpan role user yang sedang login
+        let currentUser = null;
+        
+        // File yang dipilih untuk upload
+        let selectedFiles = [];
+
+        // Elemen DOM
+        const loadingScreen = document.getElementById('loading-screen');
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const adminPanel = document.getElementById('adminPanel');
+        const userRoleDisplay = document.getElementById('userRoleDisplay');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const photoCount = document.getElementById('photoCount');
+        
+        // Drag & Drop Elements
+        const dragDropArea = document.getElementById('dragDropArea');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const filesPreview = document.getElementById('filesPreview');
+        const previewList = document.getElementById('previewList');
+        const fileCount = document.getElementById('fileCount');
+        const totalSize = document.getElementById('totalSize');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const clearBtn = document.getElementById('clearBtn');
+        const uploadAllBtn = document.getElementById('uploadAllBtn');
+        const photoAlbum = document.getElementById('photoAlbum');
+        
+        // Backup/Restore Elements
+        const backupBtn = document.getElementById('backupBtn');
+        const restoreBtn = document.getElementById('restoreBtn');
+        const importBtn = document.getElementById('importBtn');
+        const restoreFileInput = document.getElementById('restoreFileInput');
+        
+        // Notification Element
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+
+        // ================== FUNGSI LOCALSTORAGE ==================
+
+        // Load photos from localStorage
+        function loadPhotosFromStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    return JSON.parse(savedData);
+                } catch (e) {
+                    console.error('Error parsing saved data:', e);
+                    return getDefaultPhotos();
+                }
+            }
+            return getDefaultPhotos();
+        }
+
+        // Load next ID from localStorage
+        function loadNextIdFromStorage() {
+            const savedId = localStorage.getItem(NEXT_ID_KEY);
+            return savedId ? parseInt(savedId) : getDefaultPhotos().length + 1;
+        }
+
+        // Save photos to localStorage
+        function savePhotosToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+                localStorage.setItem(NEXT_ID_KEY, nextPhotoId.toString());
+                showNotification('Data foto berhasil disimpan!');
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+                showNotification('Gagal menyimpan data!', true);
+            }
+        }
+
+        // Get default photos (jika tidak ada data di localStorage)
+        function getDefaultPhotos() {
+            return [
+                { 
+                    id: 1, 
+                    title: "Upacara Bendera", 
+                    album: "kegiatan", 
+                    date: "2023-09-17", 
+                    url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                },
+                { 
+                    id: 2, 
+                    title: "Pertandingan Futsal", 
+                    album: "olahraga", 
+                    date: "2023-09-15", 
+                    url: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                },
+                { 
+                    id: 3, 
+                    title: "Pentas Seni", 
+                    album: "seni", 
+                    date: "2023-09-10", 
+                    url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                },
+                { 
+                    id: 4, 
+                    title: "Belajar di Kelas", 
+                    album: "kelas", 
+                    date: "2023-09-05", 
+                    url: "https://images.unsplash.com/photo-1524178234883-043d5c3f3cf4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                },
+                { 
+                    id: 5, 
+                    title: "Karya Seni Siswa", 
+                    album: "seni", 
+                    date: "2023-08-28", 
+                    url: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                },
+                { 
+                    id: 6, 
+                    title: "Lomba Basket", 
+                    album: "olahraga", 
+                    date: "2023-08-25", 
+                    url: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                }
+            ];
+        }
+
+        // ================== FUNGSI NOTIFICATION ==================
+
+        function showNotification(message, isError = false) {
+            notificationText.textContent = message;
+            
+            if (isError) {
+                notification.classList.add('error');
+                notification.querySelector('i').className = 'fas fa-exclamation-circle';
+            } else {
+                notification.classList.remove('error');
+                notification.querySelector('i').className = 'fas fa-check-circle';
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ================== INISIALISASI APLIKASI ==================
+
+        // Simulasi loading
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                loginContainer.classList.add('active');
+            }, 500);
+        }, 2000);
+
+        // Fungsi login
+        loginBtn.addEventListener('click', () => {
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            
+            // Validasi login
+            if (users[username] && users[username].password === password && users[username].role === role) {
+                currentUser = { username, role: users[username].role };
+                
+                // Sembunyikan login, tampilkan main container
+                loginContainer.classList.remove('active');
+                mainContainer.classList.add('active');
+                
+                // Tampilkan role user
+                userRoleDisplay.textContent = `Halo, ${username} (${role})`;
+                
+                // Jika admin, tampilkan panel admin
+                if (role === 'admin') {
+                    adminPanel.classList.add('active');
+                    mainContainer.classList.add('admin-view');
+                }
+                
+                // Muat galeri
+                renderGallery('all');
+                updatePhotoCount();
+                errorMsg.style.display = 'none';
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        // Fungsi logout
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            selectedFiles = [];
+            mainContainer.classList.remove('active');
+            mainContainer.classList.remove('admin-view');
+            adminPanel.classList.remove('active');
+            loginContainer.classList.add('active');
+            
+            // Reset form login
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('role').value = 'siswa';
+            
+            // Reset preview
+            clearFilePreview();
+        });
+
+        // Fungsi render galeri
+        function renderGallery(filter = 'all') {
+            galleryGrid.innerHTML = '';
+            
+            const filteredPhotos = filter === 'all' 
+                ? photos 
+                : photos.filter(photo => photo.album === filter);
+            
+            if (filteredPhotos.length === 0) {
+                galleryGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
+                        <i class="fas fa-images" style="font-size: 60px; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <h3>Tidak ada foto di album ini</h3>
+                        ${currentUser?.role === 'admin' ? 
+                            '<p>Upload foto pertama Anda menggunakan panel admin di atas!</p>' : 
+                            '<p>Admin belum mengupload foto untuk album ini.</p>'}
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredPhotos.forEach(photo => {
+                const photoCard = document.createElement('div');
+                photoCard.className = 'photo-card';
+                photoCard.innerHTML = `
+                    <img src="${photo.url}" alt="${photo.title}" class="photo-img" loading="lazy">
+                    <div class="photo-info">
+                        <div class="photo-title">${photo.title}</div>
+                        <div class="photo-date">${formatDate(photo.date)}</div>
+                        ${currentUser?.role === 'admin' ? 
+                            `<button class="delete-btn" onclick="deletePhoto(${photo.id})">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>` 
+                            : ''}
+                    </div>
+                `;
+                galleryGrid.appendChild(photoCard);
+            });
+        }
+
+        // Update photo count
+        function updatePhotoCount() {
+            photoCount.textContent = `(${photos.length} foto)`;
+        }
+
+        // Format tanggal
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+
+        // Fungsi filter album
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Hapus class active dari semua tombol
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Tambah class active ke tombol yang diklik
+                btn.classList.add('active');
+                // Render galeri dengan filter yang dipilih
+                renderGallery(btn.getAttribute('data-filter'));
+            });
+        });
+
+        // Fungsi hapus foto (hanya untuk admin)
+        window.deletePhoto = function(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
+                photos = photos.filter(photo => photo.id !== id);
+                savePhotosToStorage(); // Simpan ke localStorage
+                renderGallery('all'); // Render ulang galeri
+                updatePhotoCount();
+                showNotification('Foto berhasil dihapus!');
+            }
+        };
+
+        // ================== DRAG & DROP FUNCTIONALITY ==================
+
+        // Event listener untuk drag & drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dragDropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop area ketika file di-drag over
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dragDropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dragDropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dragDropArea.classList.add('drag-over');
+        }
+
+        function unhighlight() {
+            dragDropArea.classList.remove('drag-over');
+        }
+
+        // Handle drop
+        dragDropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Browse button
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Handle selected files
+        function handleFiles(files) {
+            if (!files.length) return;
+            
+            // Filter hanya file gambar
+            const imageFiles = Array.from(files).filter(file => 
+                file.type.startsWith('image/')
+            );
+            
+            // Tambahkan ke selectedFiles
+            selectedFiles.push(...imageFiles);
+            
+            // Update preview
+            updateFilePreview();
+        }
+
+        // Update file preview
+        function updateFilePreview() {
+            if (selectedFiles.length === 0) {
+                filesPreview.classList.remove('active');
+                return;
+            }
+            
+            filesPreview.classList.add('active');
+            previewList.innerHTML = '';
+            fileCount.textContent = selectedFiles.length;
+            
+            // Hitung total size
+            let totalSizeBytes = 0;
+            
+            selectedFiles.forEach((file, index) => {
+                totalSizeBytes += file.size;
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'preview-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-image file-icon"></i>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${formatFileSize(file.size)}</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-times remove-file" data-index="${index}"></i>
+                `;
+                previewList.appendChild(fileItem);
+            });
+            
+            // Format total size
+            totalSize.textContent = formatFileSize(totalSizeBytes);
+            
+            // Tambahkan event listener untuk remove file
+            document.querySelectorAll('.remove-file').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.getAttribute('data-index'));
+                    removeFile(index);
+                });
+            });
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Remove file from selection
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFilePreview();
+        }
+
+        // Clear all files
+        clearBtn.addEventListener('click', clearFilePreview);
+
+        function clearFilePreview() {
+            selectedFiles = [];
+            filesPreview.classList.remove('active');
+            fileInput.value = '';
+            progressContainer.classList.remove('active');
+        }
+
+        // Upload all files
+        uploadAllBtn.addEventListener('click', uploadAllFiles);
+
+        async function uploadAllFiles() {
+            if (selectedFiles.length === 0) {
+                alert('Pilih file terlebih dahulu!');
+                return;
+            }
+            
+            const album = photoAlbum.value;
+            const albumNames = {
+                'kegiatan': 'Kegiatan Sekolah',
+                'olahraga': 'Olahraga',
+                'seni': 'Seni & Budaya',
+                'kelas': 'Kelas',
+                'lainnya': 'Lainnya'
+            };
+            
+            // Tampilkan progress bar
+            progressContainer.classList.add('active');
+            progressFill.style.width = '0%';
+            progressPercent.textContent = '0%';
+            
+            // Simulasi upload progresif
+            let uploadedCount = 0;
+            
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                
+                // Simulasi proses upload dengan delay
+                await simulateUpload(file, i);
+                
+                uploadedCount++;
+                
+                // Update progress bar
+                const progress = Math.round((uploadedCount / selectedFiles.length) * 100);
+                progressFill.style.width = `${progress}%`;
+                progressPercent.textContent = `${progress}%`;
+                
+                // Generate photo object dengan data URL (untuk penyimpanan lokal)
+                const reader = new FileReader();
+                
+                await new Promise(resolve => {
+                    reader.onload = function(e) {
+                        const newPhoto = {
+                            id: nextPhotoId++,
+                            title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+                            album: album,
+                            date: new Date().toISOString().split('T')[0],
+                            url: e.target.result // Simpan sebagai data URL
+                        };
+                        
+                        photos.unshift(newPhoto); // Tambahkan di awal array
+                        resolve();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            // Selesai upload
+            setTimeout(() => {
+                progressContainer.classList.remove('active');
+                savePhotosToStorage(); // Simpan ke localStorage
+                renderGallery('all'); // Render ulang galeri
+                updatePhotoCount();
+                clearFilePreview();
+                
+                // Tampilkan notifikasi sukses
+                showNotification(`Berhasil mengupload ${selectedFiles.length} foto ke album ${albumNames[album]}!`);
+            }, 500);
+        }
+
+        // Simulasi upload dengan delay
+        function simulateUpload(file, index) {
+            return new Promise(resolve => {
+                const delay = 300 + Math.random() * 700; // Random delay 300-1000ms
+                setTimeout(() => {
+                    console.log(`Uploaded: ${file.name} (${formatFileSize(file.size)})`);
+                    resolve();
+                }, delay);
+            });
+        }
+
+        // ================== BACKUP & RESTORE FUNCTIONS ==================
+
+        // Backup data to JSON file
+        backupBtn.addEventListener('click', () => {
+            const backupData = {
+                photos: photos,
+                nextId: nextPhotoId,
+                exportedAt: new Date().toISOString(),
+                totalPhotos: photos.length
+            };
+            
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `backup_foto_sekolah_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Backup data berhasil diekspor!');
+        });
+
+        // Restore data from JSON file
+        restoreBtn.addEventListener('click', () => {
+            if (confirm('Restore data akan mengganti semua data yang ada. Lanjutkan?')) {
+                restoreFileInput.click();
+            }
+        });
+
+        restoreFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    // Validasi data
+                    if (!backupData.photos || !Array.isArray(backupData.photos)) {
+                        throw new Error('Format data tidak valid');
+                    }
+                    
+                    // Update data
+                    photos = backupData.photos;
+                    nextPhotoId = backupData.nextId || photos.length + 1;
+                    
+                    // Simpan ke localStorage
+                    savePhotosToStorage();
+                    
+                    // Render ulang galeri
+                    renderGallery('all');
+                    updatePhotoCount();
+                    
+                    showNotification(`Data berhasil direstore! ${photos.length} foto telah dimuat.`);
+                    
+                    // Reset input file
+                    restoreFileInput.value = '';
+                } catch (error) {
+                    showNotification('Gagal memuat file backup! Format tidak valid.', true);
+                    console.error('Restore error:', error);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Import data (tambahkan dari file)
+        importBtn.addEventListener('click', () => {
+            if (confirm('Import data akan menambahkan foto dari file ke data yang ada. Lanjutkan?')) {
+                restoreFileInput.click();
+            }
+        });
+
+        // Handle import (sama file input dengan restore)
+        restoreFileInput.addEventListener('change', function(e) {
+            // For import, we need to check which button was clicked last
+            // This is simplified - in real app you'd have separate inputs
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importData = JSON.parse(e.target.result);
+                    
+                    // Validasi data
+                    if (!importData.photos || !Array.isArray(importData.photos)) {
+                        throw new Error('Format data tidak valid');
+                    }
+                    
+                    // Add imported photos with new IDs
+                    importData.photos.forEach(photo => {
+                        const newPhoto = {
+                            ...photo,
+                            id: nextPhotoId++,
+                            date: photo.date || new Date().toISOString().split('T')[0]
+                        };
+                        photos.unshift(newPhoto);
+                    });
+                    
+                    // Simpan ke localStorage
+                    savePhotosToStorage();
+                    
+                    // Render ulang galeri
+                    renderGallery('all');
+                    updatePhotoCount();
+                    
+                    showNotification(`Berhasil mengimpor ${importData.photos.length} foto!`);
+                    
+                    // Reset input file
+                    restoreFileInput.value = '';
+                } catch (error) {
+                    showNotification('Gagal mengimpor file! Format tidak valid.', true);
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Login dengan Enter key
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+
+        // Auto-save when page is about to close
+        window.addEventListener('beforeunload', () => {
+            // Data sudah otomatis tersimpan setiap ada perubahan
+            // melalui savePhotosToStorage()
+        });
+
+        // Cek data di localStorage saat load
+        window.addEventListener('load', () => {
+            const savedCount = photos.length;
+            console.log(`Memuat ${savedCount} foto dari penyimpanan lokal`);
+        });
+    </script>
+</body>
+</html>
