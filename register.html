@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - Kelas X DKV 3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0f1a 0%, #1a1f2e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(26, 31, 46, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(106, 122, 224, 0.2);
+        }
+
+        /* Header */
+        .register-header {
+            background: linear-gradient(90deg, #8a2be2 0%, #9b59b6 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .register-header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Register Form */
+        .register-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b0b7d6;
+            font-size: 1.1rem;
+        }
+
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(106, 122, 224, 0.2);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .form-group select {
+            appearance: none;
+            padding-right: 40px;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b0b7d6;
+            pointer-events: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #6a7ae0;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(106, 122, 224, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(176, 183, 214, 0.6);
+        }
+
+        /* Password strength */
+        .password-strength {
+            margin-top: 5px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { 
+            width: 33%; 
+            background: #e06a6a; 
+        }
+        .strength-medium { 
+            width: 66%; 
+            background: #fdbb2d; 
+        }
+        .strength-strong { 
+            width: 100%; 
+            background: #2da77a; 
+        }
+
+        .strength-text {
+            font-size: 0.8rem;
+            margin-top: 3px;
+            text-align: right;
+            color: #b0b7d6;
+        }
+
+        /* Terms */
+        .terms-agreement {
+            margin: 25px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid #8a2be2;
+        }
+
+        .terms-agreement label {
+            display: flex;
+            align-items: flex-start;
+            color: #b0b7d6;
+            cursor: pointer;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .terms-agreement input {
+            margin-right: 10px;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+
+        .terms-link {
+            color: #8a9bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Register Button */
+        .register-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #8a2be2, #9b59b6);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .register-btn:hover {
+            background: linear-gradient(90deg, #7a1bd2, #8b49a6);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #b0b7d6;
+        }
+
+        .login-link a {
+            color: #8a9bff;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 5px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Message Styling */
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.success {
+            background-color: rgba(45, 167, 122, 0.2);
+            color: #2da77a;
+            border: 1px solid rgba(45, 167, 122, 0.3);
+            display: block;
+        }
+
+        .message.error {
+            background-color: rgba(224, 106, 106, 0.2);
+            color: #e06a6a;
+            border: 1px solid rgba(224, 106, 106, 0.3);
+            display: block;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .register-footer {
+            background-color: rgba(26, 31, 46, 0.8);
+            padding: 20px;
+            text-align: center;
+            color: #b0b7d6;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(106, 122, 224, 0.2);
+        }
+
+        .register-footer a {
+            color: #8a9bff;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            margin-bottom: 20px;
+        }
+
+        .role-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .role-option {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .role-option input {
+            display: none;
+        }
+
+        .role-label {
+            display: block;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(106, 122, 224, 0.2);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .role-option input:checked + .role-label {
+            background: rgba(106, 122, 224, 0.2);
+            border-color: #6a7ae0;
+        }
+
+        .role-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #8a9bff;
+        }
+
+        .role-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .role-desc {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                max-width: 100%;
+            }
+            
+            .register-form {
+                padding: 30px 20px;
+            }
+            
+            .register-header {
+                padding: 20px;
+            }
+            
+            .register-header h1 {
+                font-size: 2rem;
+            }
+            
+            .role-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Daftar Akun</h1>
+            <p>Bergabung dengan Kelas X DKV 3</p>
+        </div>
+
+        <div class="register-form">
+            <div id="message" class="message"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="registerName" placeholder="Nama Lengkap" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="registerEmail" placeholder="Alamat Email" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-at"></i>
+                    <input type="text" id="registerUsername" placeholder="Username" required>
+                </div>
+                
+                <!-- Role Selection -->
+                <div class="role-selection">
+                    <label style="display: block; margin-bottom: 10px; color: #b0b7d6;">Pilih Peran:</label>
+                    <div class="role-options">
+                        <div class="role-option">
+                            <input type="radio" id="roleStudent" name="userRole" value="student" checked>
+                            <label for="roleStudent" class="role-label">
+                                <div class="role-icon">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="role-name">Siswa</div>
+                                <div class="role-desc">Akses terbatas</div>
+                            </label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="roleAdmin" name="userRole" value="admin">
+                            <label for="roleAdmin" class="role-label">
+                                <div class="role-icon">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <div class="role-name">Admin</div>
+                                <div class="role-desc">Akses penuh</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="registerPassword" placeholder="Password" required>
+                    <div class="password-strength">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText"></div>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="registerConfirmPassword" placeholder="Konfirmasi Password" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-graduation-cap"></i>
+                    <select id="registerKelas" required>
+                        <option value="" disabled selected>Pilih Kelas</option>
+                        <option value="X DKV 1">X DKV 1</option>
+                        <option value="X DKV 2">X DKV 2</option>
+                        <option value="X DKV 3">X DKV 3</option>
+                        <option value="XI DKV 1">XI DKV 1</option>
+                        <option value="XI DKV 2">XI DKV 2</option>
+                        <option value="XI DKV 3">XI DKV 3</option>
+                        <option value="XII DKV 1">XII DKV 1</option>
+                        <option value="XII DKV 2">XII DKV 2</option>
+                        <option value="XII DKV 3">XII DKV 3</option>
+                    </select>
+                    <i class="fas fa-chevron-down select-arrow"></i>
+                </div>
+                
+                <div class="terms-agreement">
+                    <label>
+                        <input type="checkbox" id="acceptTerms" required>
+                        Saya menyetujui 
+                        <a href="#" class="terms-link" id="termsLink">syarat dan ketentuan</a>
+                        serta 
+                        <a href="#" class="terms-link" id="privacyLink">kebijakan privasi</a>
+                        yang berlaku
+                    </label>
+                </div>
+                
+                <button type="submit" class="register-btn" id="registerBtn">
+                    <span id="registerBtnText">Daftar Sekarang</span>
+                </button>
+            </form>
+
+            <div class="login-link">
+                Sudah punya akun? 
+                <a href="login.html">Login di sini</a>
+            </div>
+        </div>
+
+        <div class="register-footer">
+            <p>&copy; 2025 Kelas X DKV 3 - Sistem Registrasi</p>
+            <p>Need help? <a href="mailto:support@dkv3.ac.id">support@dkv3.ac.id</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Storage Keys
+        const USERS_STORAGE_KEY = 'dkv3_users';
+        const CURRENT_USER_KEY = 'dkv3_current_user';
+        const LOGIN_STATUS_KEY = 'dkv3_loggedIn';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupPasswordStrength();
+            setupEventListeners();
+            
+            // Set default kelas to X DKV 3
+            document.getElementById('registerKelas').value = 'X DKV 3';
+            
+            // Focus on first input
+            document.getElementById('registerName').focus();
+        });
+
+        // Password strength indicator
+        function setupPasswordStrength() {
+            const passwordInput = document.getElementById('registerPassword');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                
+                let strength = 0;
+                let text = '';
+                
+                if (password.length === 0) {
+                    strength = 0;
+                    text = '';
+                } else if (password.length < 6) {
+                    strength = 1;
+                    text = 'Lemah';
+                } else if (password.length < 8) {
+                    strength = 2;
+                    text = 'Sedang';
+                } else {
+                    // Check for complexity
+                    const hasUpperCase = /[A-Z]/.test(password);
+                    const hasLowerCase = /[a-z]/.test(password);
+                    const hasNumbers = /\d/.test(password);
+                    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                    
+                    const complexity = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
+                    
+                    if (complexity >= 3) {
+                        strength = 3;
+                        text = 'Kuat';
+                    } else if (complexity >= 2) {
+                        strength = 2;
+                        text = 'Sedang';
+                    } else {
+                        strength = 1;
+                        text = 'Lemah';
+                    }
+                }
+                
+                // Update UI
+                strengthBar.className = 'strength-bar';
+                if (strength === 1) strengthBar.classList.add('strength-weak');
+                if (strength === 2) strengthBar.classList.add('strength-medium');
+                if (strength === 3) strengthBar.classList.add('strength-strong');
+                
+                strengthText.textContent = text;
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Terms link
+            document.getElementById('termsLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showTermsModal();
+            });
+            
+            // Privacy link
+            document.getElementById('privacyLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPrivacyModal();
+            });
+        }
+
+        // Get users from storage
+        function getUsersFromStorage() {
+            const usersJson = localStorage.getItem(USERS_STORAGE_KEY);
+            return usersJson ? JSON.parse(usersJson) : [];
+        }
+
+        // Validate email
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = 'message';
+            
+            if (type) {
+                messageEl.classList.add(type);
+            }
+        }
+
+        // Form Submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const kelas = document.getElementById('registerKelas').value;
+            const acceptTerms = document.getElementById('acceptTerms').checked;
+            const registerBtn = document.getElementById('registerBtn');
+            const registerBtnText = document.getElementById('registerBtnText');
+            
+            // Get selected role
+            const selectedRole = document.querySelector('input[name="userRole"]:checked').value;
+            
+            // Validation
+            if (!name || !email || !username || !password || !confirmPassword || !kelas) {
+                showMessage('Harap isi semua field yang diperlukan', 'error');
+                return;
+            }
+            
+            if (!acceptTerms) {
+                showMessage('Anda harus menyetujui syarat dan ketentuan', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('Password dan konfirmasi password tidak cocok', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password minimal 6 karakter', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showMessage('Format email tidak valid', 'error');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showMessage('Username minimal 3 karakter', 'error');
+                return;
+            }
+            
+            // Check if username or email already exists
+            const users = getUsersFromStorage();
+            if (users.some(u => u.username === username)) {
+                showMessage('Username sudah digunakan', 'error');
+                return;
+            }
+            
+            if (users.some(u => u.email === email)) {
+                showMessage('Email sudah terdaftar', 'error');
+                return;
+            }
+            
+            // Show loading
+            registerBtn.disabled = true;
+            registerBtnText.innerHTML = '<div class="spinner"></div>Mendaftarkan...';
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                username: username,
+                password: password,
+                role: selectedRole,
+                kelas: kelas,
+                createdAt: new Date().toISOString(),
+                status: 'active'
+            };
+            
+            // Save user to storage
+            users.push(newUser);
+            localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+            
+            // Auto login after registration
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
+            localStorage.setItem(LOGIN_STATUS_KEY, 'true');
+            
+            showMessage(`Pendaftaran berhasil! Selamat datang ${name}`, 'success');
+            
+            // Redirect after registration
+            setTimeout(() => {
+                const redirectTo = localStorage.getItem('redirectAfterLogin') || 'index.html';
+                localStorage.removeItem('redirectAfterLogin');
+                window.location.href = redirectTo;
+            }, 2000);
+        });
+
+        // Terms Modal
+        function showTermsModal() {
+            const terms = `
+                SYARAT DAN KETENTUAN KELAS X DKV 3
+            
+                1. KEANGGOTAAN
+                - Hanya siswa dan guru kelas X DKV 3 yang boleh mendaftar
+                - Data yang diberikan harus akurat dan valid
+                - Setiap anggota bertanggung jawab atas akunnya
+            
+                2. HAK AKSES
+                - Admin: Dapat mengelola semua konten termasuk album foto
+                - Siswa: Hanya dapat melihat konten yang diizinkan
+                - Tidak diperbolehkan membagikan akses akun
+            
+                3. KONTEN
+                - Konten harus sesuai dengan etika sekolah
+                - Dilarang mengupload konten yang tidak pantas
+                - Hak cipta konten tetap milik pembuat
+            
+                4. PRIVASI
+                - Data pribadi akan dilindungi
+                - Tidak akan dibagikan ke pihak ketiga
+                - Album foto hanya untuk anggota kelas
+            
+                5. SANKSI
+                - Pelanggaran akan berakibat penangguhan akun
+                - Konten tidak pantas akan dihapus
+                - Penyalahgunaan akan dilaporkan
+            `;
+            
+            alert(terms);
+        }
+
+        // Privacy Modal
+        function showPrivacyModal() {
+            const privacy = `
+                KEBIJAKAN PRIVASI KELAS X DKV 3
+            
+                1. PENGUMPULAN DATA
+                - Kami mengumpulkan data yang diperlukan untuk keanggotaan
+                - Data termasuk nama, email, username, dan kelas
+                - Data digunakan hanya untuk keperluan internal kelas
+            
+                2. PENGGUNAAN DATA
+                - Untuk verifikasi keanggotaan
+                - Untuk komunikasi internal kelas
+                - Untuk keperluan akademik
+            
+                3. PERLINDUNGAN DATA
+                - Data disimpan secara aman di browser Anda
+                - Tidak ada data yang dikirim ke server luar
+                - Hanya anggota kelas yang dapat mengakses data
+            
+                4. FOTO DAN ALBUM
+                - Foto hanya dapat diakses oleh anggota terdaftar
+                - Upload foto hanya untuk admin/guru
+                - Siswa hanya dapat melihat foto
+            
+                5. HAK ANDA
+                - Anda dapat menghapus akun kapan saja
+                - Anda dapat meminta koreksi data
+                - Anda dapat mengajukan pertanyaan tentang privasi
+            `;
+            
+            alert(privacy);
+        }
+    </script>
+</body>
+</html>
