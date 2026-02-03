@@ -682,3 +682,7 @@ async function uploadToServer(file, album) {
     const result = await response.json();
     return result.photoUrl; // URL dari server
 }
+// Buka browser console (F12)
+showAllStorageData(); // Lihat semua data
+backupStorageData();  // Backup ke file JSON
+cleanOldData();       // Hapus data lama
