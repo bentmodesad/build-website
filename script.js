@@ -682,7 +682,27 @@ async function uploadToServer(file, album) {
     const result = await response.json();
     return result.photoUrl; // URL dari server
 }
-// Buka browser console (F12)
-showAllStorageData(); // Lihat semua data
-backupStorageData();  // Backup ke file JSON
-cleanOldData();       // Hapus data lama
+// Pencarian real-time
+searchInput.addEventListener('input', () => {
+    const searchQuery = searchInput.value.trim();
+    const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+    renderGallery(activeFilter, searchQuery);
+});
+// Auto login dengan session yang tersimpan
+const savedSession = loadUserSession();
+if (savedSession && users[savedSession.username]) {
+    performLogin(savedSession.username, savedSession.role);
+}
+const newPhoto = {
+    id: nextPhotoId++,
+    title: file.name.replace(/\.[^/.]+$/, ""),
+    album: album,
+    date: new Date().toISOString().split('T')[0],
+    url: e.target.result,
+    uploader: currentUser.name, // Tambahan
+    description: `Diupload oleh ${currentUser.name} pada ${new Date().toLocaleDateString('id-ID')}` // Tambahan
+};
+// Untuk developer/testing
+window.debugAlbum(); // Lihat semua data di console
+window.exportAlbumData(); // Export data ke console
+
