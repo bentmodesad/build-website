@@ -1,11 +1,10 @@
 {
-  "name": "Album",
-  "version": "1.0.0",
-  "description": "Penyimpanan Album",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "metadata": {
+    "exported_at": "2025-01-15T10:30:00.000Z",
+    "app_name": "X DKV 3 Album Foto",
+    "app_version": "2.0.0",
+    "total_items": 6,
+    "total_size": "2.4 MB",
+    "exported_by": "Admin X DKV 3"
   },
-  "author": "Bent",
-  "license": "ISC"
-}
+ 
