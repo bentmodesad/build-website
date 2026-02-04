@@ -9,6 +9,12 @@
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-storage-compat.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -182,6 +188,38 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
+        .google-btn {
+            background: #DB4437 !important;
+        }
+
+        .google-btn:hover {
+            background: #C23321 !important;
+        }
+
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: #6a11cb;
+            color: white;
+        }
+
         .error-msg {
             color: #ff4757;
             margin-top: 15px;
@@ -190,6 +228,42 @@
             background: #ffeaea;
             border-radius: 5px;
             border-left: 4px solid #ff4757;
+        }
+
+        .register-section {
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .register-link {
+            color: #6a11cb;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+        .firebase-info {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .firebase-info h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* Tombol Kembali ke Beranda */
@@ -813,6 +887,11 @@
             color: #fff;
         }
 
+        .user-role-badge.guru {
+            background: rgba(0, 184, 148, 0.3);
+            color: #fff;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .login-container, .main-container {
@@ -895,6 +974,25 @@
             align-items: center;
             gap: 5px;
         }
+
+        /* Offline/Online Badge */
+        .offline-badge {
+            background: #ff9800;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .online-badge {
+            background: #4caf50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -912,32 +1010,61 @@
     <!-- Login Form -->
     <div class="login-container" id="loginContainer">
         <h2><i class="fas fa-camera"></i> Album Foto X DKV 3</h2>
-        <div class="input-group">
-            <label for="username"><i class="fas fa-user"></i> Username</label>
-            <input type="text" id="username" placeholder="Masukkan username" autocomplete="username">
-        </div>
-        <div class="input-group">
-            <label for="password"><i class="fas fa-lock"></i> Password</label>
-            <input type="password" id="password" placeholder="Masukkan password" autocomplete="current-password">
-        </div>
-        <div class="input-group">
-            <label for="role"><i class="fas fa-user-tag"></i> Login sebagai</label>
-            <select id="role">
-                <option value="siswa">Siswa</option>
-                <option value="admin">Admin</option>
-            </select>
-        </div>
-        <button class="login-btn" id="loginBtn">
-            <i class="fas fa-sign-in-alt"></i> Masuk ke Album
-        </button>
-        <div class="error-msg" id="errorMsg">
-            <i class="fas fa-exclamation-circle"></i> Username atau password salah!
+        
+        <!-- Login Tabs -->
+        <div class="login-tabs">
+            <button class="tab-btn active" data-tab="email">
+                <i class="fas fa-envelope"></i> Email
+            </button>
+            <button class="tab-btn" data-tab="google">
+                <i class="fab fa-google"></i> Google
+            </button>
         </div>
         
-        <div style="margin-top: 30px; color: #777; font-size: 14px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
-            <p><strong><i class="fas fa-info-circle"></i> Akses Login:</strong></p>
-           <i class="fas fa-shield-alt"></i> Data tersimpan secara lokal di browser Anda
-            </p>
+        <!-- Email Login Form -->
+        <div id="emailForm">
+            <div class="input-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="email" placeholder="email@example.com" required>
+            </div>
+            <div class="input-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" required>
+            </div>
+            <button class="login-btn" id="emailLoginBtn">
+                <i class="fas fa-sign-in-alt"></i> Masuk dengan Email
+            </button>
+        </div>
+        
+        <!-- Google Login Form -->
+        <div id="googleForm" style="display: none;">
+            <div style="text-align: center; padding: 20px 0;">
+                <p>Masuk dengan akun Google sekolah</p>
+                <button class="login-btn google-btn" id="googleLoginBtn">
+                    <i class="fab fa-google"></i> Masuk dengan Google
+                </button>
+            </div>
+        </div>
+        
+        <!-- Register Link -->
+        <div class="register-section">
+            <a href="#" id="registerLink" class="register-link">
+                <i class="fas fa-user-plus"></i> Belum punya akun? Daftar sekarang
+            </a>
+        </div>
+        
+        <!-- Error Message -->
+        <div class="error-msg" id="errorMsg">
+            <i class="fas fa-exclamation-circle"></i> 
+            <span id="errorText"></span>
+        </div>
+        
+        <!-- Firebase Info -->
+        <div class="firebase-info">
+            <h4><i class="fas fa-database"></i> Database Cloud</h4>
+            <p><i class="fas fa-check-circle" style="color:#4caf50;"></i> Data tersimpan aman di Firebase</p>
+            <p><i class="fas fa-sync-alt" style="color:#2196f3;"></i> Sinkronisasi real-time</p>
+            <p><i class="fas fa-shield-alt" style="color:#ff9800;"></i> Autentikasi terjamin</p>
         </div>
         
         <!-- Tombol Kembali ke Beranda -->
@@ -945,6 +1072,50 @@
             <a href="index.html" class="home-btn">
                 <i class="fas fa-home"></i> Kembali ke Beranda
             </a>
+        </div>
+    </div>
+
+    <!-- Register Form -->
+    <div class="login-container" id="registerContainer" style="display: none;">
+        <h2><i class="fas fa-user-plus"></i> Daftar Akun Baru</h2>
+        
+        <div class="input-group">
+            <label for="regName"><i class="fas fa-user"></i> Nama Lengkap</label>
+            <input type="text" id="regName" placeholder="Nama lengkap Anda" required>
+        </div>
+        <div class="input-group">
+            <label for="regEmail"><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" id="regEmail" placeholder="email@example.com" required>
+        </div>
+        <div class="input-group">
+            <label for="regPassword"><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="regPassword" placeholder="Minimal 6 karakter" minlength="6" required>
+        </div>
+        <div class="input-group">
+            <label for="regConfirmPassword"><i class="fas fa-lock"></i> Konfirmasi Password</label>
+            <input type="password" id="regConfirmPassword" placeholder="Ulangi password" required>
+        </div>
+        <div class="input-group">
+            <label for="regRole"><i class="fas fa-user-tag"></i> Daftar sebagai</label>
+            <select id="regRole">
+                <option value="siswa">Siswa</option>
+                <option value="guru">Guru</option>
+            </select>
+        </div>
+        
+        <button class="login-btn" id="registerBtn" style="background: linear-gradient(to right, #00b09b, #96c93d);">
+            <i class="fas fa-user-plus"></i> Daftar Akun
+        </button>
+        
+        <div class="register-section">
+            <a href="#" id="backToLogin" class="register-link">
+                <i class="fas fa-arrow-left"></i> Kembali ke Login
+            </a>
+        </div>
+        
+        <div class="error-msg" id="regErrorMsg" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i> 
+            <span id="regErrorText"></span>
         </div>
     </div>
 
@@ -957,6 +1128,9 @@
                     <span>Album Foto X DKV 3</span>
                     <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">
                         <i class="fas fa-rocket"></i> Menjelajah Semesta Kreativitas
+                        <span id="connectionIndicator" class="online-badge">
+                            <i class="fas fa-wifi"></i> Online
+                        </span>
                     </div>
                 </div>
             </div>
@@ -1000,12 +1174,13 @@
             <!-- Progress Bar -->
             <div class="progress-container" id="progressContainer">
                 <div class="progress-header">
-                    <span><i class="fas fa-sync-alt"></i> Mengupload...</span>
+                    <span><i class="fas fa-cloud-upload-alt"></i> Mengupload ke Firebase...</span>
                     <span id="progressPercent">0%</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
+                <div id="uploadStatus" style="font-size: 12px; color: #666; margin-top: 5px;"></div>
             </div>
 
             <!-- Upload Options -->
@@ -1020,33 +1195,32 @@
                         <option value="lainnya">✨ Lainnya</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="photoTitle"><i class="fas fa-heading"></i> Judul Foto (opsional)</label>
+                    <input type="text" id="photoTitle" placeholder="Masukkan judul foto">
+                </div>
                 <div class="upload-actions">
                     <button type="button" class="clear-btn" id="clearBtn">
                         <i class="fas fa-trash"></i> Hapus Semua
                     </button>
                     <button type="button" class="upload-btn" id="uploadAllBtn">
-                        <i class="fas fa-cloud-upload-alt"></i> Upload Semua
+                        <i class="fas fa-cloud-upload-alt"></i> Upload ke Firebase
                     </button>
                 </div>
             </div>
 
             <!-- Backup/Restore Section -->
             <div class="backup-section">
-                <h4><i class="fas fa-database"></i> Backup Data Foto</h4>
+                <h4><i class="fas fa-database"></i> Firebase Admin Panel</h4>
+                <p><i class="fas fa-info-circle"></i> Foto disimpan di Firebase Storage dan metadata di Firestore</p>
                 <div class="backup-actions">
-                    <button class="backup-btn" id="backupBtn">
-                        <i class="fas fa-download"></i> Backup Data
+                    <button class="backup-btn" id="exportBtn">
+                        <i class="fas fa-download"></i> Export Data
                     </button>
-                    <button class="restore-btn" id="restoreBtn">
-                        <i class="fas fa-upload"></i> Restore Data
-                    </button>
-                    <button class="import-btn" id="importBtn">
-                        <i class="fas fa-file-import"></i> Import Data
+                    <button class="restore-btn" id="statsBtn">
+                        <i class="fas fa-chart-bar"></i> Lihat Statistik
                     </button>
                 </div>
-                <p style="margin-top: 10px; font-size: 12px; color: #666;">
-                    <i class="fas fa-info-circle"></i> Data tersimpan di browser ini. Backup untuk pindah browser.
-                </p>
             </div>
         </div>
 
@@ -1103,7 +1277,7 @@
             <p>&copy; 2023-2025 Album Foto X DKV 3. Hak Cipta Dilindungi.</p>
             <p>Dibuat dengan <i class="fas fa-heart" style="color:#ff4757;"></i> untuk Kelas X DKV 3</p>
             <p style="margin-top: 10px; font-size: 12px;">
-                <i class="fas fa-database"></i> Data tersimpan secara permanen di browser Anda | 
+                <i class="fas fa-database"></i> Powered by Firebase Cloud | 
                 <i class="fas fa-user-shield"></i> Login diperlukan untuk mengakses
             </p>
         </footer>
@@ -1119,34 +1293,53 @@
     <input type="file" id="restoreFileInput" accept=".json" style="display: none;">
 
     <script>
-        // Data login (dalam aplikasi nyata, ini akan di server)
-        const users = {
-            admin: { password: "admin123", role: "admin", name: "Administrator" },
-            siswa: { password: "siswa123", role: "siswa", name: "Siswa X DKV 3" }
+        // ================== FIREBASE CONFIGURATION ==================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkdgBayBc3aCbXJJwrWJU_yKuEf5lew8I",
+            authDomain: "xdkv3-e549b.firebaseapp.com",
+            projectId: "xdkv3-e549b",
+            storageBucket: "xdkv3-e549b.firebasestorage.app",
+            messagingSenderId: "542182832963",
+            appId: "1:542182832963:web:9a53d830969446953c0df6",
+            measurementId: "G-X2BZMZKL67"
         };
 
-        // KEY untuk LocalStorage
-        const STORAGE_KEY = 'xdkv3_photo_album_data';
-        const NEXT_ID_KEY = 'xdkv3_photo_next_id';
-        const USER_SESSION_KEY = 'xdkv3_user_session';
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
 
-        // Data album foto - diambil dari LocalStorage atau default
-        let photos = loadPhotosFromStorage();
-        let nextPhotoId = loadNextIdFromStorage();
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-        // Simpan role user yang sedang login
+        // ================== VARIABLES & CONSTANTS ==================
+        const usersCollection = db.collection('users');
+        const photosCollection = db.collection('photos');
+
+        let photos = [];
         let currentUser = null;
-        
-        // File yang dipilih untuk upload
+        let userData = null;
         let selectedFiles = [];
+        let unsubscribePhotos = null;
 
-        // Elemen DOM
+        // ================== DOM ELEMENTS ==================
         const loadingScreen = document.getElementById('loading-screen');
         const loginContainer = document.getElementById('loginContainer');
+        const registerContainer = document.getElementById('registerContainer');
         const mainContainer = document.getElementById('mainContainer');
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const emailForm = document.getElementById('emailForm');
+        const googleForm = document.getElementById('googleForm');
+        const emailLoginBtn = document.getElementById('emailLoginBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const registerBtn = document.getElementById('registerBtn');
         const errorMsg = document.getElementById('errorMsg');
+        const regErrorMsg = document.getElementById('regErrorMsg');
+        const registerLink = document.getElementById('registerLink');
+        const backToLogin = document.getElementById('backToLogin');
+        const logoutBtn = document.getElementById('logoutBtn');
         const adminPanel = document.getElementById('adminPanel');
         const userRoleDisplay = document.getElementById('userRoleDisplay');
         const galleryGrid = document.getElementById('galleryGrid');
@@ -1154,6 +1347,9 @@
         const photoCount = document.getElementById('photoCount');
         const searchInput = document.getElementById('searchInput');
         const noResults = document.getElementById('noResults');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const connectionIndicator = document.getElementById('connectionIndicator');
         
         // Drag & Drop Elements
         const dragDropArea = document.getElementById('dragDropArea');
@@ -1166,155 +1362,19 @@
         const progressContainer = document.getElementById('progressContainer');
         const progressFill = document.getElementById('progressFill');
         const progressPercent = document.getElementById('progressPercent');
+        const uploadStatus = document.getElementById('uploadStatus');
         const clearBtn = document.getElementById('clearBtn');
         const uploadAllBtn = document.getElementById('uploadAllBtn');
         const photoAlbum = document.getElementById('photoAlbum');
-        
-        // Backup/Restore Elements
-        const backupBtn = document.getElementById('backupBtn');
-        const restoreBtn = document.getElementById('restoreBtn');
-        const importBtn = document.getElementById('importBtn');
-        const restoreFileInput = document.getElementById('restoreFileInput');
-        
-        // Notification Element
-        const notification = document.getElementById('notification');
-        const notificationText = document.getElementById('notificationText');
+        const photoTitle = document.getElementById('photoTitle');
+        const exportBtn = document.getElementById('exportBtn');
+        const statsBtn = document.getElementById('statsBtn');
 
-        // ================== FUNGSI LOCALSTORAGE ==================
-
-        // Load photos from localStorage
-        function loadPhotosFromStorage() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                try {
-                    return JSON.parse(savedData);
-                } catch (e) {
-                    console.error('Error parsing saved data:', e);
-                    return getDefaultPhotos();
-                }
-            }
-            return getDefaultPhotos();
-        }
-
-        // Load next ID from localStorage
-        function loadNextIdFromStorage() {
-            const savedId = localStorage.getItem(NEXT_ID_KEY);
-            return savedId ? parseInt(savedId) : getDefaultPhotos().length + 1;
-        }
-
-        // Load user session from localStorage
-        function loadUserSession() {
-            const sessionData = localStorage.getItem(USER_SESSION_KEY);
-            if (sessionData) {
-                try {
-                    return JSON.parse(sessionData);
-                } catch (e) {
-                    console.error('Error parsing session data:', e);
-                    return null;
-                }
-            }
-            return null;
-        }
-
-        // Save photos to localStorage
-        function savePhotosToStorage() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
-                localStorage.setItem(NEXT_ID_KEY, nextPhotoId.toString());
-                return true;
-            } catch (e) {
-                console.error('Error saving to localStorage:', e);
-                showNotification('Gagal menyimpan data!', 'error');
-                return false;
-            }
-        }
-
-        // Save user session to localStorage
-        function saveUserSession(user) {
-            try {
-                const sessionData = {
-                    username: user.username,
-                    role: user.role,
-                    name: user.name,
-                    loginTime: new Date().toISOString()
-                };
-                localStorage.setItem(USER_SESSION_KEY, JSON.stringify(sessionData));
-                return true;
-            } catch (e) {
-                console.error('Error saving session:', e);
-                return false;
-            }
-        }
-
-        // Get default photos (jika tidak ada data di localStorage)
-        function getDefaultPhotos() {
-            return [
-                { 
-                    id: 1, 
-                    title: "Upacara Bendera X DKV 3", 
-                    album: "kegiatan", 
-                    date: "2023-09-17", 
-                    url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    uploader: "Admin",
-                    description: "Upacara bendera perdana kelas X DKV 3"
-                },
-                { 
-                    id: 2, 
-                    title: "Pertandingan Futsal Antar Kelas", 
-                    album: "olahraga", 
-                    date: "2023-09-15", 
-                    url: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    uploader: "Admin",
-                    description: "Tim futsal X DKV 3 sedang bertanding"
-                },
-                { 
-                    id: 3, 
-                    title: "Pentas Seni Kreatif", 
-                    album: "seni", 
-                    date: "2023-09-10", 
-                    url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    uploader: "Admin",
-                    description: "Penampilan seni dari siswa X DKV 3"
-                },
-                { 
-                    id: 4, 
-                    title: "Sesi Belajar di Kelas", 
-                    album: "kelas", 
-                    date: "2023-09-05", 
-                    url: "https://images.unsplash.com/photo-1524178234883-043d5c3f3cf4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    uploader: "Admin",
-                    description: "Kegiatan belajar mengajar di kelas"
-                },
-                { 
-                    id: 5, 
-                    title: "Karya Seni Digital", 
-                    album: "seni", 
-                    date: "2023-08-28", 
-                    url: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    uploader: "Admin",
-                    description: "Hasil karya seni digital siswa"
-                },
-                { 
-                    id: 6, 
-                    title: "Lomba Basket Sekolah", 
-                    album: "olahraga", 
-                    date: "2023-08-25", 
-                    url: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    uploader: "Admin",
-                    description: "Tim basket X DKV 3 dalam lomba"
-                }
-            ];
-        }
-
-        // ================== FUNGSI NOTIFICATION ==================
-
+        // ================== HELPER FUNCTIONS ==================
         function showNotification(message, type = 'success') {
             notificationText.textContent = message;
-            
-            // Reset semua kelas
             notification.className = 'notification';
             
-            // Tambah kelas berdasarkan type
             if (type === 'error') {
                 notification.classList.add('error');
                 notification.querySelector('i').className = 'fas fa-exclamation-circle';
@@ -1327,114 +1387,378 @@
             
             notification.classList.add('show');
             
-            // Auto hide setelah 3 detik
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
 
-        // ================== INISIALISASI APLIKASI ==================
+        function showError(message) {
+            errorMsg.style.display = 'block';
+            document.getElementById('errorText').textContent = message;
+        }
 
-        // Simulasi loading
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                
-                // Cek apakah user sudah login
-                const savedSession = loadUserSession();
-                if (savedSession && users[savedSession.username]) {
-                    // Auto login dengan session yang tersimpan
-                    performLogin(savedSession.username, savedSession.role);
-                } else {
-                    loginContainer.classList.add('active');
-                }
-            }, 500);
-        }, 2000);
-
-        // Fungsi login
-        loginBtn.addEventListener('click', () => {
-            const username = document.getElementById('username').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
-            
-            // Validasi login
-            if (users[username] && users[username].password === password && users[username].role === role) {
-                performLogin(username, role);
-            } else {
-                errorMsg.style.display = 'block';
-                // Shake animation untuk error
-                errorMsg.style.animation = 'shake 0.5s';
-                setTimeout(() => {
-                    errorMsg.style.animation = '';
-                }, 500);
-            }
-        });
-
-        // Fungsi untuk melakukan login
-        function performLogin(username, role) {
-            currentUser = { 
-                username, 
-                role: users[username].role,
-                name: users[username].name
-            };
-            
-            // Simpan session
-            saveUserSession(currentUser);
-            
-            // Sembunyikan login, tampilkan main container
-            loginContainer.classList.remove('active');
-            mainContainer.classList.add('active');
-            
-            // Tampilkan role user dengan badge
-            const roleBadgeClass = role === 'admin' ? 'admin' : 'siswa';
-            userRoleDisplay.innerHTML = `
-                <strong>${currentUser.name}</strong>
-                <span class="user-role-badge ${roleBadgeClass}">
-                    <i class="fas fa-${role === 'admin' ? 'crown' : 'user-graduate'}"></i>
-                    ${role === 'admin' ? 'Administrator' : 'Siswa'}
-                </span>
-            `;
-            
-            // Jika admin, tampilkan panel admin
-            if (role === 'admin') {
-                adminPanel.classList.add('active');
-                mainContainer.classList.add('admin-view');
-                showNotification('Selamat datang Administrator!', 'success');
-            } else {
-                showNotification(`Selamat datang ${currentUser.name}!`, 'success');
-            }
-            
-            // Muat galeri
-            renderGallery('all');
-            updatePhotoCount();
+        function hideError() {
             errorMsg.style.display = 'none';
         }
 
-        // Fungsi logout
-        logoutBtn.addEventListener('click', () => {
-            if (confirm('Apakah Anda yakin ingin logout?')) {
-                currentUser = null;
-                selectedFiles = [];
-                localStorage.removeItem(USER_SESSION_KEY);
-                mainContainer.classList.remove('active');
-                mainContainer.classList.remove('admin-view');
-                adminPanel.classList.remove('active');
-                loginContainer.classList.add('active');
+        function showRegError(message) {
+            regErrorMsg.style.display = 'block';
+            document.getElementById('regErrorText').textContent = message;
+        }
+
+        function hideRegError() {
+            regErrorMsg.style.display = 'none';
+        }
+
+        function showLoginScreen() {
+            loginContainer.classList.add('active');
+            registerContainer.style.display = 'none';
+            mainContainer.classList.remove('active');
+            hideError();
+        }
+
+        function showRegisterScreen() {
+            loginContainer.classList.remove('active');
+            registerContainer.style.display = 'block';
+            mainContainer.classList.remove('active');
+            hideRegError();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Tanggal tidak tersedia';
+            
+            let date;
+            if (timestamp.toDate) {
+                date = timestamp.toDate();
+            } else if (timestamp instanceof Date) {
+                date = timestamp;
+            } else {
+                date = new Date(timestamp);
+            }
+            
+            return date.toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function updateNetworkStatus() {
+            if (navigator.onLine) {
+                connectionIndicator.className = 'online-badge';
+                connectionIndicator.innerHTML = '<i class="fas fa-wifi"></i> Online';
+            } else {
+                connectionIndicator.className = 'offline-badge';
+                connectionIndicator.innerHTML = '<i class="fas fa-wifi-slash"></i> Offline';
+            }
+        }
+
+        // ================== INITIALIZATION ==================
+        function initApp() {
+            // Check network status
+            updateNetworkStatus();
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+            
+            // Set up auth state listener
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    await handleUserLogin(user);
+                } else {
+                    showLoginScreen();
+                }
                 
-                // Reset form login
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('role').value = 'siswa';
+                // Hide loading screen
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }, 1000);
+            });
+        }
+
+        // ================== AUTHENTICATION ==================
+        // Tab switching
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
                 
-                // Reset preview
-                clearFilePreview();
-                
-                showNotification('Anda telah logout!', 'success');
+                if (btn.dataset.tab === 'email') {
+                    emailForm.style.display = 'block';
+                    googleForm.style.display = 'none';
+                } else {
+                    emailForm.style.display = 'none';
+                    googleForm.style.display = 'block';
+                }
+            });
+        });
+
+        // Email login
+        emailLoginBtn.addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showError('Email dan password harus diisi');
+                return;
+            }
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                hideError();
+            } catch (error) {
+                console.error('Login error:', error);
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        showError('Email tidak terdaftar');
+                        break;
+                    case 'auth/wrong-password':
+                        showError('Password salah');
+                        break;
+                    case 'auth/invalid-email':
+                        showError('Format email tidak valid');
+                        break;
+                    default:
+                        showError('Gagal login. Coba lagi nanti');
+                }
             }
         });
 
-        // Fungsi render galeri dengan search
+        // Google login
+        googleLoginBtn.addEventListener('click', async () => {
+            try {
+                await auth.signInWithPopup(googleProvider);
+                hideError();
+            } catch (error) {
+                console.error('Google login error:', error);
+                if (error.code === 'auth/popup-closed-by-user') {
+                    showError('Popup login ditutup');
+                } else {
+                    showError('Gagal login dengan Google');
+                }
+            }
+        });
+
+        // Register new account
+        registerBtn.addEventListener('click', async () => {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const role = document.getElementById('regRole').value;
+            
+            // Validation
+            if (!name || !email || !password || !confirmPassword) {
+                showRegError('Semua field harus diisi');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showRegError('Password minimal 6 karakter');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showRegError('Password tidak cocok');
+                return;
+            }
+            
+            try {
+                // Create user in Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Create user document in Firestore
+                await usersCollection.doc(user.uid).set({
+                    uid: user.uid,
+                    email: user.email,
+                    name: name,
+                    role: role,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    isActive: true
+                });
+                
+                // Update user profile
+                await user.updateProfile({ displayName: name });
+                
+                showNotification('Pendaftaran berhasil! Silakan login', 'success');
+                showLoginScreen();
+                
+                // Clear form
+                document.getElementById('regName').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regConfirmPassword').value = '';
+                hideRegError();
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        showRegError('Email sudah terdaftar');
+                        break;
+                    case 'auth/invalid-email':
+                        showRegError('Format email tidak valid');
+                        break;
+                    case 'auth/weak-password':
+                        showRegError('Password terlalu lemah');
+                        break;
+                    default:
+                        showRegError('Gagal mendaftar. Coba lagi');
+                }
+            }
+        });
+
+        // Handle user login
+        async function handleUserLogin(user) {
+            try {
+                currentUser = user;
+                
+                // Get user data from Firestore
+                const userDoc = await usersCollection.doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    userData = userDoc.data();
+                    
+                    // Update last login
+                    await usersCollection.doc(user.uid).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                } else {
+                    // Create user document if doesn't exist
+                    userData = {
+                        uid: user.uid,
+                        email: user.email,
+                        name: user.displayName || user.email.split('@')[0],
+                        role: 'siswa',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        isActive: true
+                    };
+                    
+                    await usersCollection.doc(user.uid).set(userData);
+                }
+                
+                // Update UI
+                updateUserUI();
+                
+                // Load photos
+                loadPhotos();
+                
+                // Show main app
+                showApp();
+                
+            } catch (error) {
+                console.error('Error handling user login:', error);
+                showNotification('Gagal memuat data pengguna', 'error');
+            }
+        }
+
+        function updateUserUI() {
+            // Update user info in header
+            const roleBadgeClass = userData.role;
+            userRoleDisplay.innerHTML = `
+                <strong>${userData.name}</strong>
+                <span class="user-role-badge ${roleBadgeClass}">
+                    <i class="fas fa-${userData.role === 'admin' ? 'crown' : 
+                                      userData.role === 'guru' ? 'chalkboard-teacher' : 'user-graduate'}"></i>
+                    ${userData.role === 'admin' ? 'Admin' : 
+                     userData.role === 'guru' ? 'Guru' : 'Siswa'}
+                </span>
+            `;
+            
+            // Show admin panel if user is admin
+            if (userData.role === 'admin') {
+                adminPanel.classList.add('active');
+                mainContainer.classList.add('admin-view');
+            } else {
+                adminPanel.classList.remove('active');
+                mainContainer.classList.remove('admin-view');
+            }
+            
+            showNotification(`Selamat datang, ${userData.name}!`, 'success');
+        }
+
+        function showApp() {
+            loginContainer.classList.remove('active');
+            registerContainer.style.display = 'none';
+            mainContainer.classList.add('active');
+        }
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                try {
+                    if (unsubscribePhotos) {
+                        unsubscribePhotos();
+                    }
+                    
+                    await auth.signOut();
+                    showNotification('Logout berhasil', 'success');
+                    
+                    // Reset UI
+                    photos = [];
+                    selectedFiles = [];
+                    userData = null;
+                    
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    showNotification('Gagal logout', 'error');
+                }
+            }
+        });
+
+        // ================== PHOTO MANAGEMENT ==================
+        function loadPhotos() {
+            try {
+                // Query photos ordered by date
+                const photosQuery = db.collection('photos')
+                    .orderBy('createdAt', 'desc');
+                
+                // Real-time listener
+                unsubscribePhotos = photosQuery.onSnapshot((snapshot) => {
+                    photos = [];
+                    snapshot.forEach((doc) => {
+                        photos.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    
+                    renderGallery('all');
+                    updatePhotoCount();
+                    
+                    // Show/hide no results message
+                    if (photos.length === 0) {
+                        noResults.style.display = 'block';
+                    } else {
+                        noResults.style.display = 'none';
+                    }
+                }, (error) => {
+                    console.error('Error listening to photos:', error);
+                    showNotification('Gagal memuat foto', 'error');
+                });
+                
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                showNotification('Gagal memuat foto dari database', 'error');
+            }
+        }
+
         function renderGallery(filter = 'all', searchQuery = '') {
             galleryGrid.innerHTML = '';
             
@@ -1442,35 +1766,36 @@
                 ? photos 
                 : photos.filter(photo => photo.album === filter);
             
-            // Apply search filter jika ada query
+            // Apply search filter
             if (searchQuery) {
                 const query = searchQuery.toLowerCase();
                 filteredPhotos = filteredPhotos.filter(photo => 
-                    photo.title.toLowerCase().includes(query) ||
-                    (photo.description && photo.description.toLowerCase().includes(query))
+                    (photo.title && photo.title.toLowerCase().includes(query)) ||
+                    (photo.description && photo.description.toLowerCase().includes(query)) ||
+                    (photo.uploaderName && photo.uploaderName.toLowerCase().includes(query))
                 );
             }
             
             if (filteredPhotos.length === 0) {
                 noResults.style.display = 'block';
                 return;
-            } else {
-                noResults.style.display = 'none';
             }
             
             filteredPhotos.forEach(photo => {
                 const photoCard = document.createElement('div');
                 photoCard.className = 'photo-card';
                 photoCard.innerHTML = `
-                    <img src="${photo.url}" alt="${photo.title}" class="photo-img" loading="lazy">
+                    <img src="${photo.url}" alt="${photo.title || 'Foto'}" class="photo-img" loading="lazy">
                     <div class="photo-info">
-                        <div class="photo-title">${photo.title}</div>
+                        <div class="photo-title">${photo.title || 'Foto tanpa judul'}</div>
                         <div class="photo-date">
-                            <i class="far fa-calendar-alt"></i> ${formatDate(photo.date)}
-                            ${photo.uploader ? `<br><i class="fas fa-user"></i> ${photo.uploader}` : ''}
+                            <i class="far fa-calendar-alt"></i> ${formatDate(photo.createdAt)}
+                            <br>
+                            <i class="fas fa-user"></i> ${photo.uploaderName || 'Anonim'}
+                            ${photo.album ? `<br><i class="fas fa-folder"></i> ${getAlbumName(photo.album)}` : ''}
                         </div>
-                        ${currentUser?.role === 'admin' ? 
-                            `<button class="delete-btn" onclick="deletePhoto(${photo.id})">
+                        ${userData?.role === 'admin' ? 
+                            `<button class="delete-btn" onclick="deletePhoto('${photo.id}', '${photo.storagePath}')">
                                 <i class="fas fa-trash"></i> Hapus
                             </button>` 
                             : ''}
@@ -1478,32 +1803,46 @@
                 `;
                 galleryGrid.appendChild(photoCard);
             });
+            
+            noResults.style.display = 'none';
         }
 
-        // Update photo count
+        function getAlbumName(albumId) {
+            const albums = {
+                'kegiatan': 'Kegiatan Sekolah',
+                'olahraga': 'Olahraga',
+                'seni': 'Seni & Budaya',
+                'kelas': 'Kelas',
+                'lainnya': 'Lainnya'
+            };
+            return albums[albumId] || albumId;
+        }
+
         function updatePhotoCount() {
-            const count = photos.length;
-            photoCount.innerHTML = `<i class="fas fa-camera"></i> ${count} foto`;
+            photoCount.textContent = `${photos.length} foto`;
         }
 
-        // Format tanggal
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('id-ID', options);
-        }
-
-        // Fungsi filter album
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Hapus class active dari semua tombol
-                filterBtns.forEach(b => b.classList.remove('active'));
-                // Tambah class active ke tombol yang diklik
-                btn.classList.add('active');
-                // Render galeri dengan filter yang dipilih
-                const searchQuery = searchInput.value.trim();
-                renderGallery(btn.getAttribute('data-filter'), searchQuery);
-            });
-        });
+        // Global delete function
+        window.deletePhoto = async function(photoId, storagePath) {
+            if (!confirm('Apakah Anda yakin ingin menghapus foto ini?')) return;
+            
+            try {
+                // Delete from Firestore
+                await photosCollection.doc(photoId).delete();
+                
+                // Delete from Storage if path exists
+                if (storagePath) {
+                    const storageRef = storage.ref().child(storagePath);
+                    await storageRef.delete();
+                }
+                
+                showNotification('Foto berhasil dihapus', 'success');
+                
+            } catch (error) {
+                console.error('Error deleting photo:', error);
+                showNotification('Gagal menghapus foto', 'error');
+            }
+        };
 
         // Search functionality
         searchInput.addEventListener('input', () => {
@@ -1512,20 +1851,18 @@
             renderGallery(activeFilter, searchQuery);
         });
 
-        // Fungsi hapus foto (hanya untuk admin)
-        window.deletePhoto = function(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
-                photos = photos.filter(photo => photo.id !== id);
-                savePhotosToStorage(); // Simpan ke localStorage
-                renderGallery('all'); // Render ulang galeri
-                updatePhotoCount();
-                showNotification('Foto berhasil dihapus!', 'success');
-            }
-        };
+        // Filter buttons
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const searchQuery = searchInput.value.trim();
+                renderGallery(this.getAttribute('data-filter'), searchQuery);
+            });
+        });
 
-        // ================== DRAG & DROP FUNCTIONALITY ==================
-
-        // Event listener untuk drag & drop
+        // ================== FILE UPLOAD ==================
+        // Drag & Drop functionality
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dragDropArea.addEventListener(eventName, preventDefaults, false);
         });
@@ -1535,7 +1872,6 @@
             e.stopPropagation();
         }
 
-        // Highlight drop area ketika file di-drag over
         ['dragenter', 'dragover'].forEach(eventName => {
             dragDropArea.addEventListener(eventName, highlight, false);
         });
@@ -1552,49 +1888,42 @@
             dragDropArea.classList.remove('drag-over');
         }
 
-        // Handle drop
         dragDropArea.addEventListener('drop', handleDrop, false);
 
         function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
+            const files = e.dataTransfer.files;
             handleFiles(files);
         }
 
-        // Browse button
         browseBtn.addEventListener('click', () => {
             fileInput.click();
         });
 
-        // File input change
         fileInput.addEventListener('change', (e) => {
             handleFiles(e.target.files);
         });
 
-        // Handle selected files
         function handleFiles(files) {
             if (!files.length) return;
             
-            // Filter hanya file gambar
-            const imageFiles = Array.from(files).filter(file => 
-                file.type.startsWith('image/')
-            );
-            
-            // Validasi ukuran file (max 10MB)
-            const validFiles = imageFiles.filter(file => file.size <= 10 * 1024 * 1024);
-            
-            if (validFiles.length !== imageFiles.length) {
-                showNotification('Beberapa file melebihi batas 10MB dan akan diabaikan', 'warning');
+            // Check user role
+            if (!userData || userData.role !== 'admin') {
+                showNotification('Hanya admin yang bisa mengupload foto', 'warning');
+                return;
             }
             
-            // Tambahkan ke selectedFiles
-            selectedFiles.push(...validFiles);
+            const imageFiles = Array.from(files).filter(file => 
+                file.type.startsWith('image/') && file.size <= 10 * 1024 * 1024 // 10MB max
+            );
             
-            // Update preview
+            if (imageFiles.length !== files.length) {
+                showNotification('Beberapa file diabaikan (bukan gambar atau >10MB)', 'warning');
+            }
+            
+            selectedFiles.push(...imageFiles);
             updateFilePreview();
         }
 
-        // Update file preview
         function updateFilePreview() {
             if (selectedFiles.length === 0) {
                 filesPreview.classList.remove('active');
@@ -1605,7 +1934,6 @@
             previewList.innerHTML = '';
             fileCount.textContent = selectedFiles.length;
             
-            // Hitung total size
             let totalSizeBytes = 0;
             
             selectedFiles.forEach((file, index) => {
@@ -1626,338 +1954,244 @@
                 previewList.appendChild(fileItem);
             });
             
-            // Format total size
             totalSize.textContent = formatFileSize(totalSizeBytes);
             
-            // Tambahkan event listener untuk remove file
             document.querySelectorAll('.remove-file').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const index = parseInt(e.target.getAttribute('data-index'));
-                    removeFile(index);
+                    selectedFiles.splice(index, 1);
+                    updateFilePreview();
                 });
             });
         }
 
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        // Remove file from selection
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateFilePreview();
-        }
-
-        // Clear all files
-        clearBtn.addEventListener('click', clearFilePreview);
-
-        function clearFilePreview() {
+        clearBtn.addEventListener('click', () => {
             selectedFiles = [];
-            filesPreview.classList.remove('active');
-            fileInput.value = '';
+            updateFilePreview();
             progressContainer.classList.remove('active');
-        }
+        });
 
-        // Upload all files
-        uploadAllBtn.addEventListener('click', uploadAllFiles);
-
-        async function uploadAllFiles() {
+        // Upload to Firebase
+        uploadAllBtn.addEventListener('click', async () => {
             if (selectedFiles.length === 0) {
                 showNotification('Pilih file terlebih dahulu!', 'warning');
                 return;
             }
             
-            const album = photoAlbum.value;
-            const albumNames = {
-                'kegiatan': 'Kegiatan Sekolah',
-                'olahraga': 'Olahraga',
-                'seni': 'Seni & Budaya',
-                'kelas': 'Kelas',
-                'lainnya': 'Lainnya'
-            };
+            if (!userData || userData.role !== 'admin') {
+                showNotification('Hanya admin yang bisa mengupload foto', 'error');
+                return;
+            }
             
-            // Tampilkan progress bar
+            const album = photoAlbum.value;
+            const title = photoTitle.value.trim();
+            
+            // Show progress
             progressContainer.classList.add('active');
             progressFill.style.width = '0%';
             progressPercent.textContent = '0%';
+            uploadStatus.textContent = 'Menyiapkan upload...';
             
-            // Simulasi upload progresif
             let uploadedCount = 0;
+            let errors = [];
             
             for (let i = 0; i < selectedFiles.length; i++) {
                 const file = selectedFiles[i];
+                const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+                const storagePath = `photos/${currentUser.uid}/${fileName}`;
+                const storageRef = storage.ref().child(storagePath);
                 
-                // Simulasi proses upload dengan delay
-                await simulateUpload(file, i);
-                
-                uploadedCount++;
-                
-                // Update progress bar
-                const progress = Math.round((uploadedCount / selectedFiles.length) * 100);
-                progressFill.style.width = `${progress}%`;
-                progressPercent.textContent = `${progress}%`;
-                
-                // Generate photo object dengan data URL (untuk penyimpanan lokal)
-                const reader = new FileReader();
-                
-                await new Promise(resolve => {
-                    reader.onload = function(e) {
-                        const newPhoto = {
-                            id: nextPhotoId++,
-                            title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
-                            album: album,
-                            date: new Date().toISOString().split('T')[0],
-                            url: e.target.result, // Simpan sebagai data URL
-                            uploader: currentUser.name,
-                            description: `Diupload oleh ${currentUser.name} pada ${new Date().toLocaleDateString('id-ID')}`
-                        };
-                        
-                        photos.unshift(newPhoto); // Tambahkan di awal array
-                        resolve();
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-            
-            // Selesai upload
-            setTimeout(() => {
-                progressContainer.classList.remove('active');
-                savePhotosToStorage(); // Simpan ke localStorage
-                renderGallery('all'); // Render ulang galeri
-                updatePhotoCount();
-                clearFilePreview();
-                
-                // Tampilkan notifikasi sukses
-                showNotification(`Berhasil mengupload ${selectedFiles.length} foto ke album ${albumNames[album]}!`, 'success');
-            }, 500);
-        }
-
-        // Simulasi upload dengan delay
-        function simulateUpload(file, index) {
-            return new Promise(resolve => {
-                const delay = 300 + Math.random() * 700; // Random delay 300-1000ms
-                setTimeout(() => {
-                    console.log(`Uploaded: ${file.name} (${formatFileSize(file.size)})`);
-                    resolve();
-                }, delay);
-            });
-        }
-
-        // ================== BACKUP & RESTORE FUNCTIONS ==================
-
-        // Backup data to JSON file
-        backupBtn.addEventListener('click', () => {
-            const backupData = {
-                photos: photos,
-                nextId: nextPhotoId,
-                exportedAt: new Date().toISOString(),
-                totalPhotos: photos.length,
-                class: "X DKV 3",
-                school: "SMK N 1 CLUWAK"
-            };
-            
-            const dataStr = JSON.stringify(backupData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `backup_foto_xdkv3_${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            showNotification('Backup data berhasil diekspor!', 'success');
-        });
-
-        // Restore data from JSON file
-        restoreBtn.addEventListener('click', () => {
-            if (confirm('Restore data akan mengganti semua data yang ada. Lanjutkan?')) {
-                restoreFileInput.click();
-            }
-        });
-
-        restoreFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
                 try {
-                    const backupData = JSON.parse(e.target.result);
+                    // Upload to Firebase Storage
+                    const uploadTask = storageRef.put(file);
                     
-                    // Validasi data
-                    if (!backupData.photos || !Array.isArray(backupData.photos)) {
-                        throw new Error('Format data tidak valid');
-                    }
-                    
-                    // Update data
-                    photos = backupData.photos;
-                    nextPhotoId = backupData.nextId || photos.length + 1;
-                    
-                    // Simpan ke localStorage
-                    savePhotosToStorage();
-                    
-                    // Render ulang galeri
-                    renderGallery('all');
-                    updatePhotoCount();
-                    
-                    showNotification(`Data berhasil direstore! ${photos.length} foto telah dimuat.`, 'success');
-                    
-                    // Reset input file
-                    restoreFileInput.value = '';
-                } catch (error) {
-                    showNotification('Gagal memuat file backup! Format tidak valid.', 'error');
-                    console.error('Restore error:', error);
-                }
-            };
-            reader.readAsText(file);
-        });
-
-        // Import data (tambahkan dari file)
-        importBtn.addEventListener('click', () => {
-            if (confirm('Import data akan menambahkan foto dari file ke data yang ada. Lanjutkan?')) {
-                restoreFileInput.click();
-            }
-        });
-
-        // Handle import (sama file input dengan restore)
-        restoreFileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importData = JSON.parse(e.target.result);
-                    
-                    // Validasi data
-                    if (!importData.photos || !Array.isArray(importData.photos)) {
-                        throw new Error('Format data tidak valid');
-                    }
-                    
-                    // Add imported photos with new IDs
-                    importData.photos.forEach(photo => {
-                        const newPhoto = {
-                            ...photo,
-                            id: nextPhotoId++,
-                            date: photo.date || new Date().toISOString().split('T')[0],
-                            uploader: photo.uploader || currentUser.name
-                        };
-                        photos.unshift(newPhoto);
+                    await new Promise((resolve, reject) => {
+                        uploadTask.on('state_changed',
+                            (snapshot) => {
+                                // Progress for individual file
+                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                uploadStatus.textContent = `Mengupload: ${file.name} (${Math.round(progress)}%)`;
+                            },
+                            (error) => {
+                                reject(error);
+                            },
+                            async () => {
+                                // Upload completed
+                                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                                
+                                // Save to Firestore
+                                await photosCollection.add({
+                                    title: title || file.name.replace(/\.[^/.]+$/, ""),
+                                    album: album,
+                                    url: downloadURL,
+                                    storagePath: storagePath,
+                                    fileName: fileName,
+                                    fileSize: file.size,
+                                    fileType: file.type,
+                                    uploaderId: currentUser.uid,
+                                    uploaderName: userData.name,
+                                    uploaderEmail: currentUser.email,
+                                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                                
+                                resolve();
+                            }
+                        );
                     });
                     
-                    // Simpan ke localStorage
-                    savePhotosToStorage();
+                    uploadedCount++;
                     
-                    // Render ulang galeri
-                    renderGallery('all');
-                    updatePhotoCount();
+                    // Update overall progress
+                    const overallProgress = Math.round((uploadedCount / selectedFiles.length) * 100);
+                    progressFill.style.width = `${overallProgress}%`;
+                    progressPercent.textContent = `${overallProgress}%`;
                     
-                    showNotification(`Berhasil mengimpor ${importData.photos.length} foto!`, 'success');
-                    
-                    // Reset input file
-                    restoreFileInput.value = '';
                 } catch (error) {
-                    showNotification('Gagal mengimpor file! Format tidak valid.', 'error');
-                    console.error('Import error:', error);
+                    console.error('Upload error:', error);
+                    errors.push(`${file.name}: ${error.message}`);
                 }
-            };
-            reader.readAsText(file);
+            }
+            
+            // Complete
+            setTimeout(() => {
+                progressContainer.classList.remove('active');
+                
+                if (errors.length === 0) {
+                    showNotification(`Berhasil mengupload ${uploadedCount} foto!`, 'success');
+                    // Clear selection
+                    selectedFiles = [];
+                    updateFilePreview();
+                    photoTitle.value = '';
+                } else {
+                    showNotification(`Berhasil mengupload ${uploadedCount} dari ${selectedFiles.length} foto. ${errors.length} gagal.`, 'warning');
+                }
+            }, 500);
         });
 
-        // Login dengan Enter key
-        document.getElementById('password').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                loginBtn.click();
+        // Export data
+        exportBtn.addEventListener('click', async () => {
+            try {
+                const snapshot = await photosCollection.get();
+                const exportData = {
+                    photos: [],
+                    metadata: {
+                        exportedAt: new Date().toISOString(),
+                        totalPhotos: snapshot.size,
+                        class: "X DKV 3",
+                        school: "SMK N 1 CLUWAK"
+                    }
+                };
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    exportData.photos.push({
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
+                        updatedAt: data.updatedAt ? data.updatedAt.toDate().toISOString() : null
+                    });
+                });
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `export_foto_xdkv3_${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showNotification('Data berhasil diekspor!', 'success');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Gagal mengekspor data', 'error');
             }
         });
 
-        // Auto-save when page is about to close
-        window.addEventListener('beforeunload', () => {
-            // Data sudah otomatis tersimpan setiap ada perubahan
-            // melalui savePhotosToStorage()
-        });
-
-        // Cek data di localStorage saat load
-        window.addEventListener('load', () => {
-            const savedCount = photos.length;
-            console.log(`📸 X DKV 3 Album Foto: Memuat ${savedCount} foto dari penyimpanan lokal`);
-            
-            // Tambahkan style untuk shake animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+        // Show statistics
+        statsBtn.addEventListener('click', async () => {
+            try {
+                const snapshot = await photosCollection.get();
+                const photosByAlbum = {};
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const album = data.album || 'lainnya';
+                    photosByAlbum[album] = (photosByAlbum[album] || 0) + 1;
+                });
+                
+                let statsMessage = `Total Foto: ${snapshot.size}\n`;
+                for (const [album, count] of Object.entries(photosByAlbum)) {
+                    statsMessage += `${getAlbumName(album)}: ${count} foto\n`;
                 }
-            `;
-            document.head.appendChild(style);
+                
+                alert('📊 Statistik Foto:\n\n' + statsMessage);
+                
+            } catch (error) {
+                console.error('Stats error:', error);
+                showNotification('Gagal mengambil statistik', 'error');
+            }
         });
 
-        // Debug function untuk developers
+        // ================== REGISTER/LOGIN NAVIGATION ==================
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showRegisterScreen();
+        });
+
+        backToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginScreen();
+        });
+
+        // ================== START APPLICATION ==================
+        // Add Enter key support for login
+        document.getElementById('password')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                emailLoginBtn.click();
+            }
+        });
+
+        document.getElementById('regPassword')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                registerBtn.click();
+            }
+        });
+
+        document.getElementById('regConfirmPassword')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                registerBtn.click();
+            }
+        });
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Export for debugging
         window.debugAlbum = function() {
             console.log('=== DEBUG X DKV 3 ALBUM ===');
-            console.log('Total Photos:', photos.length);
-            console.log('Next Photo ID:', nextPhotoId);
             console.log('Current User:', currentUser);
-            console.log('LocalStorage Usage:', JSON.stringify(localStorage).length + ' bytes');
+            console.log('User Data:', userData);
+            console.log('Total Photos:', photos.length);
             console.log('Selected Files:', selectedFiles.length);
+            console.log('Firebase Auth:', auth.currentUser);
             console.log('==========================');
         };
 
-        // Export function untuk debugging
-        window.exportAlbumData = function() {
-            return {
-                photos: photos,
-                metadata: {
-                    count: photos.length,
-                    nextId: nextPhotoId,
-                    timestamp: new Date().toISOString()
-                }
-            };
-        };
-    </script>
-    <script>
-// Load konfigurasi dari package.json
-fetch('package.json')
-    .then(response => response.json())
-    .then(config => {
-        console.log('Album Config:', config.albumConfig);
-        
-        // Gunakan konfigurasi di aplikasi
-        document.title = config.albumConfig.name;
-        
-        // Update UI dengan konfigurasi
-        updateAppConfig(config.albumConfig);
-    })
-    .catch(error => {
-        console.error('Gagal load konfigurasi:', error);
-        // Gunakan konfigurasi default
-        useDefaultConfig();
-    });
+        // Add shake animation for error
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
 
-function updateAppConfig(config) {
-    // Update elemen HTML dengan data dari config
-    document.getElementById('app-title').textContent = config.name;
-    document.getElementById('class-name').textContent = config.className;
-    
-    // Generate album filters dari config
-    const filtersDiv = document.getElementById('album-filters');
-    config.albums.forEach(album => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-btn';
-        btn.dataset.filter = album.id;
-        btn.innerHTML = `<i class="fas fa-${album.icon}"></i> ${album.name}`;
-        btn.style.borderLeftColor = album.color;
-        filtersDiv.appendChild(btn);
-    });
-}
-</script>
+    </script>
 </body>
 </html>
