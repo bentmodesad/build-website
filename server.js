@@ -381,5 +381,413 @@ const newPhoto = {
 // Untuk developer/testing
 window.debugAlbum(); // Lihat semua data di console
 window.exportAlbumData(); // Export data ke console
+// Tambahkan di bagian atas script (setelah deklarasi variabel users)
+let appConfig = {
+    name: "Album Foto X DKV 3",
+    className: "X DKV 3",
+    school: "SMK N 1 CLUWAK",
+    albums: [
+        { id: "kegiatan", name: "Kegiatan Sekolah", icon: "calendar-check", color: "#6a11cb" },
+        { id: "olahraga", name: "Olahraga", icon: "running", color: "#2575fc" },
+        { id: "seni", name: "Seni & Budaya", icon: "paint-brush", color: "#ff6b9d" },
+        { id: "kelas", name: "Kelas", icon: "chalkboard-teacher", color: "#00b894" },
+        { id: "lainnya", name: "Lainnya", icon: "star", color: "#ffa502" }
+    ],
+    theme: {
+        primary: "#6a11cb",
+        secondary: "#2575fc"
+    }
+};
+
+// Fungsi untuk load konfigurasi dari package.json
+async function loadAppConfig() {
+    try {
+        const response = await fetch('package.json');
+        if (!response.ok) {
+            throw new Error('Package.json tidak ditemukan');
+        }
+        
+        const configData = await response.json();
+        
+        // Gunakan konfigurasi dari package.json jika ada
+        if (configData.albumConfig) {
+            appConfig = {
+                ...appConfig,
+                ...configData.albumConfig,
+                // Pastikan albums selalu ada
+                albums: configData.albumConfig.albums || appConfig.albums
+            };
+            console.log('✅ Konfigurasi dari package.json dimuat');
+        }
+        
+        // Terapkan konfigurasi ke aplikasi
+        applyAppConfig();
+        
+    } catch (error) {
+        console.log('⚠️ Menggunakan konfigurasi default:', error.message);
+        applyAppConfig(); // Tetap terapkan config default
+    }
+}
+
+// Fungsi untuk menerapkan konfigurasi ke UI
+function applyAppConfig() {
+    // Update judul aplikasi
+    document.title = appConfig.name;
+    
+    // Update logo di header
+    const logoElement = document.querySelector('.logo span');
+    if (logoElement) {
+        logoElement.textContent = appConfig.name;
+        // Tambahkan subjudul jika ada
+        const logoDiv = document.querySelector('.logo div');
+        if (logoDiv && appConfig.className) {
+            const subTitle = logoDiv.querySelector('.sub-title') || 
+                document.createElement('div');
+            subTitle.className = 'sub-title';
+            subTitle.style.cssText = 'font-size: 14px; opacity: 0.8; margin-top: 5px;';
+            subTitle.innerHTML = `<i class="fas fa-graduation-cap"></i> ${appConfig.className}`;
+            
+            if (!logoDiv.querySelector('.sub-title')) {
+                logoDiv.appendChild(subTitle);
+            }
+        }
+    }
+    
+    // Update footer
+    const footer = document.querySelector('footer p:first-child');
+    if (footer && appConfig.school) {
+        footer.innerHTML = `&copy; 2023-2025 ${appConfig.name}. ${appConfig.school}`;
+    }
+    
+    // Update dropdown album di upload panel
+    updateAlbumDropdown();
+    
+    // Update filter buttons di galeri
+    updateAlbumFilters();
+    
+    // Terapkan tema warna
+    applyThemeColors();
+}
+
+// Update dropdown album di panel admin
+function updateAlbumDropdown() {
+    const albumSelect = document.getElementById('photoAlbum');
+    if (!albumSelect) return;
+    
+    // Simpan nilai yang dipilih
+    const selectedValue = albumSelect.value;
+    
+    // Clear existing options
+    albumSelect.innerHTML = '';
+    
+    // Tambahkan opsi dari config
+    appConfig.albums.forEach(album => {
+        const option = document.createElement('option');
+        option.value = album.id;
+        option.textContent = `${getIconElement(album.icon)} ${album.name}`;
+        albumSelect.appendChild(option);
+    });
+    
+    // Kembalikan nilai yang dipilih jika masih valid
+    if (appConfig.albums.some(a => a.id === selectedValue)) {
+        albumSelect.value = selectedValue;
+    }
+}
+
+// Update filter buttons di galeri
+function updateAlbumFilters() {
+    const filtersContainer = document.querySelector('.album-filters');
+    if (!filtersContainer) return;
+    
+    // Clear existing buttons kecuali "Semua"
+    const allBtn = filtersContainer.querySelector('[data-filter="all"]');
+    filtersContainer.innerHTML = '';
+    
+    // Tambahkan kembali button "Semua"
+    if (allBtn) {
+        filtersContainer.appendChild(allBtn);
+    } else {
+        // Buat button "Semua" jika tidak ada
+        const allButton = document.createElement('button');
+        allButton.className = 'filter-btn active';
+        allButton.dataset.filter = 'all';
+        allButton.innerHTML = '<i class="fas fa-layer-group"></i> Semua';
+        filtersContainer.appendChild(allButton);
+    }
+    
+    // Tambahkan buttons dari config
+    appConfig.albums.forEach(album => {
+        const button = document.createElement('button');
+        button.className = 'filter-btn';
+        button.dataset.filter = album.id;
+        button.innerHTML = `${getIconElement(album.icon)} ${album.name}`;
+        button.style.borderLeft = `4px solid ${album.color || '#6a11cb'}`;
+        filtersContainer.appendChild(button);
+    });
+    
+    // Re-attach event listeners
+    attachFilterListeners();
+}
+
+// Helper function untuk mendapatkan icon element
+function getIconElement(iconName) {
+    return `<i class="fas fa-${iconName}"></i>`;
+}
+
+// Terapkan tema warna dari config
+function applyThemeColors() {
+    if (!appConfig.theme) return;
+    
+    const style = document.createElement('style');
+    style.id = 'dynamic-theme';
+    
+    // Hapus style lama jika ada
+    const oldStyle = document.getElementById('dynamic-theme');
+    if (oldStyle) oldStyle.remove();
+    
+    // Buat CSS dinamis berdasarkan tema
+    const { primary, secondary } = appConfig.theme;
+    
+    style.textContent = `
+        .login-btn, .upload-btn, .filter-btn.active, .photo-count-badge {
+            background: linear-gradient(to right, ${primary}, ${secondary}) !important;
+        }
+        
+        .browse-btn, .backup-btn {
+            background: ${primary} !important;
+        }
+        
+        .drag-drop-area {
+            border-color: ${primary} !important;
+        }
+        
+        .drag-drop-area i, .file-icon {
+            color: ${primary} !important;
+        }
+        
+        body {
+            background: linear-gradient(135deg, ${primary} 0%, ${secondary} 100%) !important;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .user-role-badge.admin {
+            background: rgba(${hexToRgb(primary)}, 0.3) !important;
+        }
+        
+        .user-role-badge.siswa {
+            background: rgba(${hexToRgb(secondary)}, 0.3) !important;
+        }
+    `;
+    
+    document.head.appendChild(style);
+}
+
+// Helper function untuk convert hex ke rgb
+function hexToRgb(hex) {
+    // Remove # if present
+    hex = hex.replace('#', '');
+    
+    // Parse hex values
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    return `${r}, ${g}, ${b}`;
+}
+
+// Re-attach event listeners untuk filter buttons
+function attachFilterListeners() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Hapus class active dari semua tombol
+            filterBtns.forEach(b => b.classList.remove('active'));
+            // Tambah class active ke tombol yang diklik
+            this.classList.add('active');
+            // Render galeri dengan filter yang dipilih
+            const searchQuery = searchInput.value.trim();
+            renderGallery(this.getAttribute('data-filter'), searchQuery);
+        });
+    });
+}
+
+// Modifikasi fungsi uploadAllFiles untuk menggunakan config album
+async function uploadAllFiles() {
+    if (selectedFiles.length === 0) {
+        showNotification('Pilih file terlebih dahulu!', 'warning');
+        return;
+    }
+    
+    const albumId = photoAlbum.value;
+    
+    // Cari nama album dari config
+    const albumConfig = appConfig.albums.find(a => a.id === albumId);
+    const albumName = albumConfig ? albumConfig.name : albumId;
+    
+    // Tampilkan progress bar
+    progressContainer.classList.add('active');
+    progressFill.style.width = '0%';
+    progressPercent.textContent = '0%';
+    
+    // Simulasi upload progresif
+    let uploadedCount = 0;
+    
+    for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        
+        // Simulasi proses upload dengan delay
+        await simulateUpload(file, i);
+        
+        uploadedCount++;
+        
+        // Update progress bar
+        const progress = Math.round((uploadedCount / selectedFiles.length) * 100);
+        progressFill.style.width = `${progress}%`;
+        progressPercent.textContent = `${progress}%`;
+        
+        // Generate photo object dengan data URL
+        const reader = new FileReader();
+        
+        await new Promise(resolve => {
+            reader.onload = function(e) {
+                const newPhoto = {
+                    id: nextPhotoId++,
+                    title: file.name.replace(/\.[^/.]+$/, ""),
+                    album: albumId,
+                    date: new Date().toISOString().split('T')[0],
+                    url: e.target.result,
+                    uploader: currentUser.name,
+                    description: `Diupload oleh ${currentUser.name} ke album ${albumName}`
+                };
+                
+                photos.unshift(newPhoto);
+                resolve();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    // Selesai upload
+    setTimeout(() => {
+        progressContainer.classList.remove('active');
+        savePhotosToStorage();
+        renderGallery('all');
+        updatePhotoCount();
+        clearFilePreview();
+        
+        showNotification(`Berhasil mengupload ${selectedFiles.length} foto ke album ${albumName}!`, 'success');
+    }, 500);
+}
+
+// Update fungsi renderGallery untuk menggunakan config album
+function renderGallery(filter = 'all', searchQuery = '') {
+    galleryGrid.innerHTML = '';
+    
+    let filteredPhotos = filter === 'all' 
+        ? photos 
+        : photos.filter(photo => photo.album === filter);
+    
+    // Apply search filter
+    if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filteredPhotos = filteredPhotos.filter(photo => 
+            photo.title.toLowerCase().includes(query) ||
+            (photo.description && photo.description.toLowerCase().includes(query))
+        );
+    }
+    
+    if (filteredPhotos.length === 0) {
+        noResults.style.display = 'block';
+        return;
+    } else {
+        noResults.style.display = 'none';
+    }
+    
+    filteredPhotos.forEach(photo => {
+        // Cari config album untuk warna
+        const albumConfig = appConfig.albums.find(a => a.id === photo.album);
+        const albumColor = albumConfig ? albumConfig.color : '#6a11cb';
+        
+        const photoCard = document.createElement('div');
+        photoCard.className = 'photo-card';
+        photoCard.innerHTML = `
+            <div style="border-top: 4px solid ${albumColor}; height: 4px;"></div>
+            <img src="${photo.url}" alt="${photo.title}" class="photo-img" loading="lazy">
+            <div class="photo-info">
+                <div class="photo-title">${photo.title}</div>
+                <div class="photo-date">
+                    <i class="far fa-calendar-alt"></i> ${formatDate(photo.date)}
+                    <br>
+                    <i class="fas fa-folder" style="color: ${albumColor}"></i> 
+                    ${albumConfig ? albumConfig.name : photo.album}
+                    ${photo.uploader ? `<br><i class="fas fa-user"></i> ${photo.uploader}` : ''}
+                </div>
+                ${currentUser?.role === 'admin' ? 
+                    `<button class="delete-btn" onclick="deletePhoto(${photo.id})">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>` 
+                    : ''}
+            </div>
+        `;
+        galleryGrid.appendChild(photoCard);
+    });
+}
+
+// Panggil loadAppConfig saat inisialisasi
+window.addEventListener('DOMContentLoaded', () => {
+    loadAppConfig();
+    
+    // Update debug function untuk menampilkan config
+    window.debugAlbum = function() {
+        console.log('=== DEBUG X DKV 3 ALBUM ===');
+        console.log('App Config:', appConfig);
+        console.log('Total Photos:', photos.length);
+        console.log('Next Photo ID:', nextPhotoId);
+        console.log('Current User:', currentUser);
+        console.log('LocalStorage Usage:', JSON.stringify(localStorage).length + ' bytes');
+        console.log('Selected Files:', selectedFiles.length);
+        console.log('==========================');
+    };
+});
+
+// Update bagian login untuk menggunakan nama dari config
+function performLogin(username, role) {
+    currentUser = { 
+        username, 
+        role: users[username].role,
+        name: users[username].name
+    };
+    
+    saveUserSession(currentUser);
+    
+    loginContainer.classList.remove('active');
+    mainContainer.classList.add('active');
+    
+    const roleBadgeClass = role === 'admin' ? 'admin' : 'siswa';
+    userRoleDisplay.innerHTML = `
+        <strong>${currentUser.name}</strong>
+        <span class="user-role-badge ${roleBadgeClass}">
+            <i class="fas fa-${role === 'admin' ? 'crown' : 'user-graduate'}"></i>
+            ${role === 'admin' ? 'Administrator' : 'Siswa'}
+        </span>
+    `;
+    
+    if (role === 'admin') {
+        adminPanel.classList.add('active');
+        mainContainer.classList.add('admin-view');
+        showNotification(`Selamat datang Administrator di ${appConfig.name}!`, 'success');
+    } else {
+        showNotification(`Selamat datang di ${appConfig.name}, ${currentUser.name}!`, 'success');
+    }
+    
+    renderGallery('all');
+    updatePhotoCount();
+    errorMsg.style.display = 'none';
+}
+
 
 
