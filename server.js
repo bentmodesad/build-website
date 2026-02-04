@@ -1,4 +1,40 @@
 const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware untuk file statis
+app.use(express.static(path.join(__dirname)));
+
+// Route utama untuk album.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'album.html'));
+});
+
+// Route untuk halaman lain
+app.get('/album', (req, res) => {
+    res.sendFile(path.join(__dirname, 'album.html'));
+});
+
+app.get('/index', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// API untuk data album (contoh)
+app.get('/api/photos', (req, res) => {
+    // Data dari localStorage atau database
+    const photos = [
+        { id: 1, title: "Foto 1", album: "kegiatan" },
+        { id: 2, title: "Foto 2", album: "olahraga" }
+    ];
+    res.json(photos);
+});
+
+// Jalankan server
+app.listen(PORT, () => {
+    console.log(`Server berjalan di http://localhost:${PORT}`);
+    console.log(`Album tersedia di http://localhost:${PORT}/album`);
+});const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -345,4 +381,5 @@ const newPhoto = {
 // Untuk developer/testing
 window.debugAlbum(); // Lihat semua data di console
 window.exportAlbumData(); // Export data ke console
+
 
