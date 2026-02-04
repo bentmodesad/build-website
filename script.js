@@ -739,3 +739,39 @@ window.lsManagerAPI = {
     }
 };
 
+// Load konfigurasi dari package.json
+fetch('package.json')
+    .then(response => response.json())
+    .then(config => {
+        console.log('Album Config:', config.albumConfig);
+        
+        // Gunakan konfigurasi di aplikasi
+        document.title = config.albumConfig.name;
+        
+        // Update UI dengan konfigurasi
+        updateAppConfig(config.albumConfig);
+    })
+    .catch(error => {
+        console.error('Gagal load konfigurasi:', error);
+        // Gunakan konfigurasi default
+        useDefaultConfig();
+    });
+
+function updateAppConfig(config) {
+    // Update elemen HTML dengan data dari config
+    document.getElementById('app-title').textContent = config.name;
+    document.getElementById('class-name').textContent = config.className;
+    
+    // Generate album filters dari config
+    const filtersDiv = document.getElementById('album-filters');
+    config.albums.forEach(album => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.filter = album.id;
+        btn.innerHTML = `<i class="fas fa-${album.icon}"></i> ${album.name}`;
+        btn.style.borderLeftColor = album.color;
+        filtersDiv.appendChild(btn);
+    });
+}
+</script>
+
